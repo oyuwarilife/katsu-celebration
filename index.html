@@ -499,21 +499,21 @@ const C = {
     label: '朝活', icon: '\u{1F305}',
     grad: 'linear-gradient(135deg, #FF9A76, #FFECD2, #fff5e6)',
     color1: '#FF9A76', color2: '#FFECD2',
-    textColor: '#8B4513',
+    textColor: '#6B3310',
     crown: '\u{2728}',
   },
   afternoon: {
     label: '昼活', icon: '\u{2600}\u{FE0F}',
     grad: 'linear-gradient(135deg, #4ECDC4, #a8e6cf, #e0f7fa)',
     color1: '#4ECDC4', color2: '#E0F7FA',
-    textColor: '#1a6b66',
+    textColor: '#145550',
     crown: '\u{1F31F}',
   },
   evening: {
     label: '夜活', icon: '\u{1F319}',
     grad: 'linear-gradient(135deg, #7B68EE, #a78bfa, #e8e0ff)',
     color1: '#7B68EE', color2: '#E8E0FF',
-    textColor: '#3d3270',
+    textColor: '#2d2458',
     crown: '\u{1FA77}',
   },
 };
@@ -712,33 +712,35 @@ function renderCard() {
   const ctx = canvas.getContext('2d');
   const W = 1080, H = 1080;
 
-  // Background
-  const grad = ctx.createLinearGradient(0, 0, W, H);
-  grad.addColorStop(0, config.color1);
-  grad.addColorStop(0.5, config.color2);
-  grad.addColorStop(1, '#ffffff');
-  ctx.fillStyle = grad;
+  // Background - solid white base
+  ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, W, H);
 
-  // Decorative circles
-  ctx.globalAlpha = 0.1;
-  ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.arc(150, 150, 220, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(930, 900, 280, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(900, 200, 140, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(100, 800, 160, 0, Math.PI*2); ctx.fill();
+  // Soft color accent at top & bottom edges
+  const topGrad = ctx.createLinearGradient(0, 0, 0, 350);
+  topGrad.addColorStop(0, config.color2);
+  topGrad.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = topGrad;
+  ctx.fillRect(0, 0, W, 350);
+
+  const btmGrad = ctx.createLinearGradient(0, H - 200, 0, H);
+  btmGrad.addColorStop(0, 'rgba(255,255,255,0)');
+  btmGrad.addColorStop(1, config.color2 + '66');
+  ctx.fillStyle = btmGrad;
+  ctx.fillRect(0, H - 200, W, 200);
+
+  // Decorative circles (subtle)
+  ctx.globalAlpha = 0.06;
+  ctx.fillStyle = config.color1;
+  ctx.beginPath(); ctx.arc(120, 120, 180, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(960, 960, 220, 0, Math.PI*2); ctx.fill();
   ctx.globalAlpha = 1;
 
-  // Inner white card
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  roundRect(ctx, 60, 60, W-120, H-120, 40);
-  ctx.fill();
-
-  // Border
+  // Border frame
   ctx.strokeStyle = config.color1;
-  ctx.lineWidth = 4;
-  ctx.globalAlpha = 0.4;
-  roundRect(ctx, 60, 60, W-120, H-120, 40);
+  ctx.lineWidth = 5;
+  ctx.globalAlpha = 0.5;
+  roundRect(ctx, 40, 40, W-80, H-80, 36);
   ctx.stroke();
   ctx.globalAlpha = 1;
 
@@ -775,54 +777,65 @@ function renderCard() {
     ctx.fillText(config.crown, cx, cy - r - 20);
   }
 
-  // Activity icon + label
-  ctx.font = '52px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
+  // Activity icon
+  ctx.font = '56px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(config.icon, W/2, contentStartY + 10);
 
-  ctx.font = 'bold 40px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = config.color1;
-  ctx.fillText(`${config.label} おつかれさま!`, W/2, contentStartY + 75);
-
-  // Title
-  ctx.font = '900 52px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+  // Activity label - bold, high contrast
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.08)';
+  ctx.shadowBlur = 6;
+  ctx.shadowOffsetY = 2;
+  ctx.font = 'bold 44px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
   ctx.fillStyle = config.textColor;
+  ctx.fillText(`${config.label} おつかれさま!`, W/2, contentStartY + 78);
+  ctx.restore();
+
+  // Title - large, dark, readable
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.06)';
+  ctx.shadowBlur = 4;
+  ctx.shadowOffsetY = 2;
+  ctx.font = '900 54px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.fillStyle = '#2d2d2d';
   const titleLines = pick[0].split('\n');
-  let ty = contentStartY + 160;
+  let ty = contentStartY + 165;
   for (const line of titleLines) {
     ctx.fillText(line, W/2, ty);
-    ty += 65;
+    ty += 68;
   }
+  ctx.restore();
 
-  // Sub message
+  // Sub message - dark gray, readable
   ctx.font = '32px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = config.textColor + 'bb';
+  ctx.fillStyle = '#555';
   const msgLines = pick[1].split('\n');
-  ty += 5;
+  ty += 8;
   for (const line of msgLines) {
     ctx.fillText(line, W/2, ty);
-    ty += 48;
+    ty += 50;
   }
 
   // Stats pill
-  const statsY = H - 170;
-  ctx.fillStyle = config.color1 + '22';
+  const statsY = H - 160;
+  ctx.fillStyle = config.color1 + '20';
   roundRect(ctx, W/2 - 180, statsY - 28, 360, 45, 22);
   ctx.fill();
   ctx.font = 'bold 26px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = config.color1;
-  let statsText = stats.streak > 1 ? `${stats.streak}-day streak!` : `Total: ${stats.total} activities`;
+  ctx.fillStyle = config.textColor;
+  let statsText = stats.streak > 1 ? `${stats.streak}-day streak!` : `Total: ${stats.total}`;
   ctx.fillText(statsText, W/2, statsY);
 
-  // Date
-  ctx.font = '24px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = '#aaa';
+  // Date - darker
+  ctx.font = '26px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.fillStyle = '#888';
   ctx.fillText(`${dateStr}  ${timeStr}`, W/2, statsY + 55);
 
   // Watermark
   ctx.font = '18px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = '#ddd';
-  ctx.fillText('katsu-celebration', W/2, H - 75);
+  ctx.fillStyle = '#ccc';
+  ctx.fillText('katsu-celebration', W/2, H - 65);
 
   return canvas;
 }
