@@ -33,7 +33,7 @@
   /* Activity buttons */
   .activity-selector { display:flex; gap:0.5rem; justify-content:center; margin-bottom:1rem; }
   .act-btn { border:none; background:#fff; color:var(--text); border-radius:16px; padding:10px 8px; font-size:0.9rem; cursor:pointer; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); display:flex; flex-direction:column; align-items:center; gap:3px; min-width:90px; box-shadow:0 3px 12px rgba(0,0,0,0.06); font-family:inherit; }
-  .act-btn .act-icon { font-size:1.6rem; transition:transform 0.3s; }
+  .act-btn .act-icon { font-size:1.6rem; transition:transform 0.3s; line-height:0; display:flex; align-items:center; justify-content:center; }
   .act-btn .act-label { font-size:0.8rem; font-weight:700; }
   .act-btn:hover { transform:translateY(-3px); }
   .act-btn:hover .act-icon { transform:scale(1.15); }
@@ -119,15 +119,15 @@
 
   <div class="activity-selector">
     <button class="act-btn" data-type="morning" onclick="selectActivity(this)">
-      <span class="act-icon">&#x1f305;</span>
+      <span class="act-icon" id="iconMorning"></span>
       <span class="act-label">朝活</span>
     </button>
     <button class="act-btn" data-type="afternoon" onclick="selectActivity(this)">
-      <span class="act-icon">&#x2600;&#xfe0f;</span>
+      <span class="act-icon" id="iconAfternoon"></span>
       <span class="act-label">昼活</span>
     </button>
     <button class="act-btn" data-type="evening" onclick="selectActivity(this)">
-      <span class="act-icon">&#x1f319;</span>
+      <span class="act-icon" id="iconEvening"></span>
       <span class="act-label">夜活</span>
     </button>
   </div>
@@ -180,10 +180,56 @@ let lastCelebData = {};
 let viewYear, viewMonth; // stamp card view
 
 const CFG = {
-  morning:   { label:'朝活', icon:'\u{1F305}', color1:'#FF9A76', color2:'#FFECD2', textColor:'#6B3310', grad:'linear-gradient(135deg,#FF9A76,#FFECD2,#fff5e6)', crown:'\u{2728}' },
-  afternoon: { label:'昼活', icon:'\u{2600}\u{FE0F}', color1:'#4ECDC4', color2:'#E0F7FA', textColor:'#145550', grad:'linear-gradient(135deg,#4ECDC4,#a8e6cf,#e0f7fa)', crown:'\u{1F31F}' },
+  morning:   { label:'朝活', icon:'\u{1F31E}', color1:'#FF9A76', color2:'#FFECD2', textColor:'#6B3310', grad:'linear-gradient(135deg,#FF9A76,#FFECD2,#fff5e6)', crown:'\u{2728}' },
+  afternoon: { label:'昼活', icon:'\u{1F359}', color1:'#4ECDC4', color2:'#E0F7FA', textColor:'#145550', grad:'linear-gradient(135deg,#4ECDC4,#a8e6cf,#e0f7fa)', crown:'\u{1F31F}' },
   evening:   { label:'夜活', icon:'\u{1F319}', color1:'#7B68EE', color2:'#E8E0FF', textColor:'#2d2458', grad:'linear-gradient(135deg,#7B68EE,#a78bfa,#e8e0ff)', crown:'\u{1FA77}' },
 };
+
+// --- Cute SVG icons ---
+function svgIcon(type, size = 48) {
+  const s = size;
+  if (type === 'morning') return `<svg width="${s}" height="${s}" viewBox="0 0 80 80" fill="none">
+    <circle cx="40" cy="42" r="22" fill="#FFD93D"/>
+    <circle cx="40" cy="42" r="18" fill="#FFE873"/>
+    <circle cx="33" cy="38" r="2.5" fill="#6B3310"/><circle cx="47" cy="38" r="2.5" fill="#6B3310"/>
+    <path d="M34 46 Q40 52 46 46" stroke="#6B3310" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <circle cx="28" cy="44" r="3.5" fill="#FFADAD" opacity="0.5"/><circle cx="52" cy="44" r="3.5" fill="#FFADAD" opacity="0.5"/>
+    <g stroke="#FFD93D" stroke-width="3" stroke-linecap="round">
+      <line x1="40" y1="12" x2="40" y2="6"/><line x1="40" y1="78" x2="40" y2="72"/>
+      <line x1="14" y1="42" x2="8" y2="42"/><line x1="72" y1="42" x2="66" y2="42"/>
+      <line x1="21" y1="23" x2="17" y2="19"/><line x1="59" y1="23" x2="63" y2="19"/>
+      <line x1="21" y1="61" x2="17" y2="65"/><line x1="59" y1="61" x2="63" y2="65"/>
+    </g>
+  </svg>`;
+  if (type === 'afternoon') return `<svg width="${s}" height="${s}" viewBox="0 0 80 80" fill="none">
+    <path d="M22 58 Q22 32 40 28 Q58 32 58 58 Z" fill="#F5F5F0" stroke="#4A4A4A" stroke-width="1.5"/>
+    <rect x="20" y="56" width="40" height="8" rx="3" fill="#2B2B2B"/>
+    <rect x="28" y="34" width="5" height="8" rx="1" fill="#1B5E20" transform="rotate(-8,30,38)"/>
+    <circle cx="36" cy="42" r="4" fill="#E53935"/><circle cx="44" cy="46" r="3" fill="#FF9800"/>
+    <circle cx="40" cy="38" r="2.5" fill="#4CAF50"/><circle cx="48" cy="40" r="2" fill="#FF7043"/>
+    <ellipse cx="32" cy="50" rx="4" ry="2.5" fill="#FFCC02" opacity="0.7"/>
+    <path d="M34 18 Q37 12 40 18" stroke="#9E9E9E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M38 15 Q41 9 44 15" stroke="#9E9E9E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M42 18 Q45 12 48 18" stroke="#9E9E9E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </svg>`;
+  if (type === 'evening') return `<svg width="${s}" height="${s}" viewBox="0 0 80 80" fill="none">
+    <path d="M50 16 A24 24 0 1 0 50 64 A18 18 0 1 1 50 16Z" fill="#FFE082"/>
+    <path d="M50 16 A24 24 0 1 0 50 64 A18 18 0 1 1 50 16Z" fill="#FFF9C4" opacity="0.4"/>
+    <circle cx="32" cy="38" r="2.5" fill="#5D4037"/><circle cx="44" cy="36" r="2.5" fill="#5D4037"/>
+    <path d="M33 46 Q38 50 43 46" stroke="#5D4037" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <circle cx="27" cy="43" r="3" fill="#FFCCBC" opacity="0.5"/><circle cx="47" cy="41" r="3" fill="#FFCCBC" opacity="0.5"/>
+    <g fill="#FFF9C4" opacity="0.7">
+      <circle cx="62" cy="20" r="1.5"/><circle cx="68" cy="35" r="1"/><circle cx="58" cy="12" r="1"/>
+      <circle cx="70" cy="50" r="1.5"/><circle cx="64" cy="60" r="1"/>
+    </g>
+  </svg>`;
+  return '';
+}
+
+// Set button icons
+document.getElementById('iconMorning').innerHTML = svgIcon('morning');
+document.getElementById('iconAfternoon').innerHTML = svgIcon('afternoon');
+document.getElementById('iconEvening').innerHTML = svgIcon('evening');
 
 // --- Season theme per month ---
 const SEASON = {
