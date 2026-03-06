@@ -78,8 +78,13 @@
   .stamp-day .hanamaru.stamps-2 { gap:0; }
   .stamp-day .hanamaru.stamps-3 { flex-wrap:wrap; gap:0; align-content:center; }
   .stamp-day .hanamaru .hana-item { display:flex; line-height:0; }
-  .stamp-day.empty { background:transparent; }
-  .stamp-legend { display:flex; gap:0.8rem; justify-content:center; margin-top:8px; font-size:0.65rem; color:#aaa; }
+  .stamp-day.empty { background:transparent; border-color:transparent; }
+  .stamp-day.has-stamp { cursor:pointer; }
+  .stamp-progress { margin-top:10px; text-align:center; }
+  .stamp-progress-bar { height:8px; border-radius:4px; background:#eee; overflow:hidden; margin:4px 0; }
+  .stamp-progress-fill { height:100%; border-radius:4px; transition:width 0.4s ease; }
+  .stamp-progress-text { font-size:0.7rem; font-weight:700; color:#888; }
+  .stamp-legend { display:flex; gap:0.8rem; justify-content:center; align-items:center; margin-top:6px; font-size:0.65rem; color:#aaa; }
 
   /* ===== CELEBRATION ===== */
   .celebration { position:fixed; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; z-index:100; padding:2rem; overflow:hidden; }
@@ -147,8 +152,9 @@
       <div class="stamp-month" id="stampMonth"></div>
       <div class="stamp-nav"><button onclick="changeMonth(1)">&gt;</button></div>
     </div>
-    <div class="stamp-weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+    <div class="stamp-weekdays"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
     <div class="stamp-grid" id="stampGrid"></div>
+    <div class="stamp-progress" id="stampProgress"></div>
     <div class="stamp-legend" id="stampLegend"></div>
   </div>
 </div>
@@ -300,6 +306,18 @@ function addStamp(dateStr, type) {
   saveStamps(stamps);
 }
 
+function removeStamp(year, month, day) {
+  const stamps = loadStamps();
+  const key = `${year}-${String(month).padStart(2,'0')}`;
+  const dayKey = String(day).padStart(2,'0');
+  if (!stamps[key] || !stamps[key][dayKey] || stamps[key][dayKey].length === 0) return;
+  const labels = stamps[key][dayKey].map(t => CFG[t]?.label || t).join('・');
+  if (!confirm(`${month}/${day} の記録（${labels}）を取り消しますか？`)) return;
+  delete stamps[key][dayKey];
+  saveStamps(stamps);
+  renderStampCard();
+}
+
 function getMonthStamps(year, month) {
   const stamps = loadStamps();
   const key = `${year}-${String(month).padStart(2,'0')}`;
@@ -362,13 +380,21 @@ function renderStampCard() {
       }
     }
 
-    html += `<div class="stamp-day${hasStamp ? ' has-stamp' : ''}${isToday ? ' today' : ''}" style="${stampStyle}${todayStyle}">
+    html += `<div class="stamp-day${hasStamp ? ' has-stamp' : ''}${isToday ? ' today' : ''}" style="${stampStyle}${todayStyle}"${hasStamp ? ` onclick="removeStamp(${year},${month},${d})"` : ''}>
       <span class="day-num">${d}</span>
       ${hasStamp ? `<span class="hanamaru ${layoutClass}">${stampHtml}</span>` : ''}
     </div>`;
   }
   grid.innerHTML = html;
-  document.getElementById('stampLegend').innerHTML = `<span>${hanamaruSVG(season.color, 18)} = 活動した日</span>`;
+
+  // Progress bar
+  const stampedDays = Object.keys(stamps).filter(k => stamps[k].length > 0).length;
+  const pct = Math.round((stampedDays / daysInMonth) * 100);
+  document.getElementById('stampProgress').innerHTML = `
+    <div class="stamp-progress-bar"><div class="stamp-progress-fill" style="width:${pct}%;background:${season.color}"></div></div>
+    <span class="stamp-progress-text">${stampedDays} / ${daysInMonth}日 参加（${pct}%）</span>`;
+
+  document.getElementById('stampLegend').innerHTML = `<span>${hanamaruSVG(season.color, 18)} = 活動した日　｜　タップで取り消し</span>`;
 }
 
 function changeMonth(delta) {
@@ -615,10 +641,24 @@ function renderCard() {
     }
   }
 
+  // Monthly paw count
+  const stampedDays = Object.keys(stamps).filter(k => stamps[k].length > 0).length;
+  const totalPaws = Object.values(stamps).reduce((sum, d) => sum + d.length, 0);
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const pct = Math.round((stampedDays / daysInMonth) * 100);
+
+  const statY = H - 130;
+  ctx.font = '900 32px "Zen Maru Gothic","Hiragino Sans","Meiryo",sans-serif';
+  ctx.fillStyle = season.color;
+  ctx.fillText(`${stampedDays}/${daysInMonth}日 参加（${pct}%）`, cx, statY);
+  ctx.font = 'bold 26px "Zen Maru Gothic","Hiragino Sans","Meiryo",sans-serif';
+  ctx.fillStyle = '#666';
+  ctx.fillText(`今月の肉球: ${totalPaws}個`, cx, statY + 40);
+
   // Footer
-  const footY = H - 60;
+  const footY = H - 40;
   ctx.strokeStyle = '#eee'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(cx - 200, footY - 30); ctx.lineTo(cx + 200, footY - 30); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 200, footY - 25); ctx.lineTo(cx + 200, footY - 25); ctx.stroke();
   ctx.font = '20px "Zen Maru Gothic","Hiragino Sans","Meiryo",sans-serif';
   ctx.fillStyle = '#ccc';
   ctx.fillText('katsu-celebration', cx, footY);
