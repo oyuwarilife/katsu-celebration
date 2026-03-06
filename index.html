@@ -72,6 +72,9 @@
   .stamp-day.today { outline:2.5px solid var(--primary); outline-offset:-1px; border-color:transparent; }
   .stamp-day .day-num { font-weight:800; font-size:0.75rem; line-height:1; position:relative; z-index:2; }
   .stamp-day .hanamaru { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:1; }
+  .stamp-day .hanamaru.stamps-2 { gap:0; }
+  .stamp-day .hanamaru.stamps-3 { flex-wrap:wrap; gap:0; align-content:center; }
+  .stamp-day .hanamaru .hana-item { display:flex; line-height:0; }
   .stamp-day.empty { background:transparent; }
   .stamp-legend { display:flex; gap:0.8rem; justify-content:center; margin-top:8px; font-size:0.65rem; color:#aaa; }
 
@@ -306,11 +309,21 @@ function renderStampCard() {
 
     const stampStyle = hasStamp ? `background:${season.color}08;` : '';
     const todayStyle = isToday ? `outline-color:${season.color};` : '';
-    const rotation = hasStamp ? ((d * 7 + month * 3) % 21 - 10) : 0;
+    const n = dayStamps.length;
+    const sz = n >= 3 ? 20 : n === 2 ? 24 : 34;
+    const layoutClass = n >= 3 ? 'stamps-3' : n === 2 ? 'stamps-2' : 'stamps-1';
+
+    let stampHtml = '';
+    if (hasStamp) {
+      for (let si = 0; si < n; si++) {
+        const rot = ((d * 7 + si * 13 + month * 3) % 25 - 12);
+        stampHtml += `<span class="hana-item" style="transform:rotate(${rot}deg)">${hanamaruSVG(season.color, sz)}</span>`;
+      }
+    }
 
     html += `<div class="stamp-day${hasStamp ? ' has-stamp' : ''}${isToday ? ' today' : ''}" style="${stampStyle}${todayStyle}">
       <span class="day-num">${d}</span>
-      ${hasStamp ? `<span class="hanamaru" style="transform:rotate(${rotation}deg)">${hanamaruSVG(season.color, 36)}</span>` : ''}
+      ${hasStamp ? `<span class="hanamaru ${layoutClass}">${stampHtml}</span>` : ''}
     </div>`;
   }
   grid.innerHTML = html;
@@ -538,14 +551,23 @@ function renderCard() {
     ctx.fillStyle = dayStamps.length > 0 ? '#222' : '#bbb';
     ctx.fillText(String(d), x + cellSize / 2, y + 35);
 
-    // Hanamaru stamp
-    if (dayStamps.length > 0) {
-      ctx.save();
-      const rot = ((d * 7 + month * 3) % 21 - 10) * Math.PI / 180;
-      ctx.translate(x + cellSize / 2, y + cellSize / 2 + 4);
-      ctx.rotate(rot);
-      drawHanamaru(ctx, 0, 0, cellSize * 0.35, season.color);
-      ctx.restore();
+    // Hanamaru stamps (1-3 per day)
+    const n = dayStamps.length;
+    if (n > 0) {
+      const cx0 = x + cellSize / 2, cy0 = y + cellSize / 2 + 4;
+      const positions = n === 1
+        ? [[0, 0, cellSize * 0.35]]
+        : n === 2
+        ? [[-cellSize * 0.2, 0, cellSize * 0.24], [cellSize * 0.2, 0, cellSize * 0.24]]
+        : [[-cellSize * 0.2, -cellSize * 0.12, cellSize * 0.2], [cellSize * 0.2, -cellSize * 0.12, cellSize * 0.2], [0, cellSize * 0.18, cellSize * 0.2]];
+      positions.forEach(([dx, dy, r], si) => {
+        ctx.save();
+        const rot = ((d * 7 + si * 13 + month * 3) % 25 - 12) * Math.PI / 180;
+        ctx.translate(cx0 + dx, cy0 + dy);
+        ctx.rotate(rot);
+        drawHanamaru(ctx, 0, 0, r, season.color);
+        ctx.restore();
+      });
     }
   }
 
