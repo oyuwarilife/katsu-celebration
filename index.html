@@ -50,6 +50,7 @@
   .action-row { display:flex; gap:0.6rem; justify-content:center; align-items:center; margin-bottom:1.2rem; }
   .date-input { font-family:inherit; font-size:0.9rem; font-weight:700; color:var(--text); background:#fff; border:2px solid var(--primary-light); border-radius:12px; padding:10px 14px; text-align:center; cursor:pointer; transition:all 0.3s; box-shadow:0 2px 8px rgba(0,0,0,0.04); width:170px; }
   .date-input:focus { outline:none; border-color:var(--primary); }
+  .today-hint { font-size:0.65rem; color:#bbb; margin-top:-0.6rem; margin-bottom:0.8rem; }
 
   .btn { border:none; border-radius:50px; padding:12px 32px; font-size:1rem; cursor:pointer; transition:all 0.3s; font-weight:900; letter-spacing:0.03em; font-family:inherit; }
   .btn-primary { background:linear-gradient(135deg,#ff6b9d,#ff8fab,#ffc107); background-size:200% 200%; animation:gradShift 3s ease infinite; color:#fff; box-shadow:0 4px 16px rgba(255,107,157,0.4); font-size:1.1rem; padding:14px 40px; }
@@ -146,6 +147,7 @@
     <input type="date" id="dateInput" class="date-input">
     <button class="btn btn-primary" id="completeBtn" onclick="completeActivity()" disabled style="opacity:0.4">参加した！</button>
   </div>
+  <p class="today-hint" id="todayHint"></p>
 
   <!-- Stamp Card -->
   <div class="stamp-card">
@@ -236,10 +238,7 @@ function svgIcon(type, size = 48) {
   return '';
 }
 
-// Set button icons
-document.getElementById('iconMorning').innerHTML = svgIcon('morning');
-document.getElementById('iconAfternoon').innerHTML = svgIcon('afternoon');
-document.getElementById('iconEvening').innerHTML = svgIcon('evening');
+// Set button icons (deferred to Init)
 
 // --- Season theme per month ---
 const SEASON = {
@@ -744,7 +743,16 @@ document.getElementById('soundToggle').addEventListener('click', () => {
 const now = new Date();
 viewYear = now.getFullYear();
 viewMonth = now.getMonth() + 1;
-document.getElementById('dateInput').value = `${viewYear}-${String(viewMonth).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+const todayISO = `${viewYear}-${String(viewMonth).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+document.getElementById('dateInput').value = todayISO;
+document.getElementById('dateInput').max = todayISO;
+document.getElementById('todayHint').textContent = '※ 日付を変えれば過去の記録もできます';
+
+// Set button icons
+document.getElementById('iconMorning').innerHTML = svgIcon('morning');
+document.getElementById('iconAfternoon').innerHTML = svgIcon('afternoon');
+document.getElementById('iconEvening').innerHTML = svgIcon('evening');
+
 renderStampCard();
 </script>
 </body>
