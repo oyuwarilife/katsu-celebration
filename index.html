@@ -161,6 +161,31 @@
     transform: translateY(-4px) scale(1.05);
   }
 
+  /* Date picker */
+  .date-picker {
+    margin-bottom: 1.5rem;
+  }
+  .date-input {
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    background: #fff;
+    border: 2px solid var(--primary-light);
+    border-radius: 14px;
+    padding: 10px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    width: 200px;
+  }
+  .date-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 4px 16px rgba(255,107,157,0.2);
+  }
+
   /* Complete button */
   .btn {
     border: none;
@@ -393,13 +418,13 @@
     <div class="sparkle"></div>
     <div class="sparkle"></div>
     <div class="avatar-circle" id="avatarCircle">
-      <div class="avatar-placeholder">tap to<br>upload</div>
+      <div class="avatar-placeholder">tap<br>icon</div>
     </div>
     <input type="file" id="avatarInput" accept="image/*">
   </div>
 
-  <h1>Today's Katsu!</h1>
-  <p class="subtitle">select & celebrate yourself</p>
+  <h1>おつかれさま!</h1>
+  <p class="subtitle">がんばった自分を祝おう</p>
 
   <div class="activity-selector">
     <button class="act-btn" data-type="morning" onclick="selectActivity(this)">
@@ -414,6 +439,10 @@
       <span class="act-icon">&#x1f319;</span>
       <span class="act-label">夜活</span>
     </button>
+  </div>
+
+  <div class="date-picker">
+    <input type="date" id="dateInput" class="date-input">
   </div>
 
   <button class="btn btn-primary" id="completeBtn" onclick="completeActivity()" disabled style="opacity:0.4">
@@ -448,9 +477,9 @@
     <div class="celeb-msg" id="celebMsg"></div>
     <div class="celeb-streak" id="celebStreak"></div>
     <div class="celeb-btns">
-      <button class="btn btn-threads" onclick="shareToThreads()">Threads</button>
-      <button class="btn btn-save" onclick="downloadCard()">&#x1f4f7; save image</button>
-      <button class="btn btn-back" onclick="closeCelebration()">back</button>
+      <button class="btn btn-threads" onclick="shareToThreads()">Threads&#12395;&#25237;&#31295;</button>
+      <button class="btn btn-save" onclick="downloadCard()">&#x1f4f7; &#30011;&#20687;&#12434;&#20445;&#23384;</button>
+      <button class="btn btn-back" onclick="closeCelebration()">&#25147;&#12427;</button>
     </div>
   </div>
 </div>
@@ -604,8 +633,9 @@ function showCelebration(stats) {
   const config = C[selectedType];
   const msgs = MSGS[selectedType];
   const pick = msgs[Math.floor(Math.random() * msgs.length)];
+  const dateVal = document.getElementById('dateInput').value;
+  const dateStr = dateVal.replace(/-/g, '.');
   const now = new Date();
-  const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
   const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
   lastCelebData = { config, pick, stats, dateStr, timeStr };
@@ -917,6 +947,14 @@ document.getElementById('soundToggle').addEventListener('click', () => {
   soundOn = !soundOn;
   document.getElementById('soundToggle').textContent = soundOn ? '\u{1F50A}' : '\u{1F507}';
 });
+
+// --- Date picker init ---
+function initDateInput() {
+  const input = document.getElementById('dateInput');
+  const now = new Date();
+  input.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+}
+initDateInput();
 
 // --- Init ---
 updateStatsDisplay();
