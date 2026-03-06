@@ -186,6 +186,22 @@ const CFG = {
   evening:   { label:'夜活', icon:'\u{1F319}', color1:'#7B68EE', color2:'#E8E0FF', textColor:'#2d2458', grad:'linear-gradient(135deg,#7B68EE,#a78bfa,#e8e0ff)', crown:'\u{1FA77}' },
 };
 
+// --- Season theme per month ---
+const SEASON = {
+  1:  { name:'1月', emoji:'\u{1F38D}', color:'#e74c3c', bg:'#fef0f0', accent:'#c0392b', label:'お正月' },
+  2:  { name:'2月', emoji:'\u{1F49D}', color:'#e91e84', bg:'#fdf0f7', accent:'#c0177a', label:'バレンタイン' },
+  3:  { name:'3月', emoji:'\u{1F338}', color:'#f48fb1', bg:'#fef4f8', accent:'#ec407a', label:'桜はじめ' },
+  4:  { name:'4月', emoji:'\u{1F337}', color:'#e91e63', bg:'#fef0f5', accent:'#d81b60', label:'新生活' },
+  5:  { name:'5月', emoji:'\u{1F33F}', color:'#4caf50', bg:'#f0f9f0', accent:'#388e3c', label:'新緑' },
+  6:  { name:'6月', emoji:'\u{2614}', color:'#7986cb', bg:'#f0f1fa', accent:'#5c6bc0', label:'梅雨' },
+  7:  { name:'7月', emoji:'\u{1F38B}', color:'#29b6f6', bg:'#e8f7fe', accent:'#0288d1', label:'七夕' },
+  8:  { name:'8月', emoji:'\u{1F386}', color:'#ff9800', bg:'#fff8f0', accent:'#f57c00', label:'夏祭り' },
+  9:  { name:'9月', emoji:'\u{1F33E}', color:'#8d6e63', bg:'#f7f3f0', accent:'#6d4c41', label:'お月見' },
+  10: { name:'10月', emoji:'\u{1F383}', color:'#ff7043', bg:'#fff3ef', accent:'#e64a19', label:'ハロウィン' },
+  11: { name:'11月', emoji:'\u{1F341}', color:'#d84315', bg:'#fef0eb', accent:'#bf360c', label:'紅葉' },
+  12: { name:'12月', emoji:'\u{1F384}', color:'#2e7d32', bg:'#f0f7f0', accent:'#1b5e20', label:'クリスマス' },
+};
+
 // --- Stamp data: { "2026-03": { "06": ["morning","afternoon"], "07": ["evening"] } } ---
 function loadStamps() {
   const raw = localStorage.getItem('katsuStamps');
@@ -222,12 +238,20 @@ function countTotalStamps() {
 function renderStampCard() {
   const grid = document.getElementById('stampGrid');
   const monthLabel = document.getElementById('stampMonth');
+  const card = document.querySelector('.stamp-card');
   const year = viewYear, month = viewMonth;
   const stamps = getMonthStamps(year, month);
+  const season = SEASON[month];
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
-  monthLabel.textContent = `${year}年${month}月`;
+  monthLabel.textContent = `${season.emoji} ${year}年${month}月 ${season.emoji}`;
+  card.style.background = season.bg;
+  card.style.borderTop = `3px solid ${season.color}`;
+
+  // Update CSS custom properties for stamp colors
+  document.documentElement.style.setProperty('--stamp-color', season.color);
+  document.documentElement.style.setProperty('--stamp-bg', season.bg);
 
   const firstDay = new Date(year, month - 1, 1).getDay();
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -244,8 +268,10 @@ function renderStampCard() {
     const hasStamp = dayStamps.length > 0;
 
     let icons = dayStamps.map(t => CFG[t]?.icon || '').join('');
+    const stampStyle = hasStamp ? `background:${season.color}18;` : '';
+    const todayStyle = isToday ? `outline-color:${season.color};` : '';
 
-    html += `<div class="stamp-day${hasStamp ? ' has-stamp' : ''}${isToday ? ' today' : ''}">
+    html += `<div class="stamp-day${hasStamp ? ' has-stamp' : ''}${isToday ? ' today' : ''}" style="${stampStyle}${todayStyle}">
       <span class="day-num">${d}</span>
       <span class="stamp-icons">${icons}</span>
     </div>`;
@@ -370,10 +396,12 @@ function renderCard() {
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, W, H);
 
-  // Top color bar
+  const season = SEASON[month];
+
+  // Top color bar - season themed
   const topGrad = ctx.createLinearGradient(0, 0, W, 0);
-  topGrad.addColorStop(0, config.color1);
-  topGrad.addColorStop(1, config.color2);
+  topGrad.addColorStop(0, season.color);
+  topGrad.addColorStop(1, config.color1);
   ctx.fillStyle = topGrad;
   roundRect(ctx, 0, 0, W, 200, 0);
   ctx.fill();
@@ -415,9 +443,12 @@ function renderCard() {
   const gridW = 7 * cellSize + 6 * gap;
   const gridLeft = (W - gridW) / 2;
 
-  // Month label
+  // Month label with season emoji
+  ctx.font = '36px "Segoe UI Emoji","Apple Color Emoji",sans-serif';
+  ctx.fillText(season.emoji, cx - 160, gridTop - 5);
+  ctx.fillText(season.emoji, cx + 160, gridTop - 5);
   ctx.font = 'bold 32px "Zen Maru Gothic","Hiragino Sans","Meiryo",sans-serif';
-  ctx.fillStyle = '#2d2d2d';
+  ctx.fillStyle = season.color;
   ctx.fillText(`${year}年${month}月`, cx, gridTop - 10);
 
   // Weekday headers
@@ -443,7 +474,7 @@ function renderCard() {
 
     // Cell background
     if (dayStamps.length > 0) {
-      ctx.fillStyle = config.color2 + 'aa';
+      ctx.fillStyle = season.color + '20';
     } else {
       ctx.fillStyle = '#f8f8f8';
     }
@@ -452,7 +483,7 @@ function renderCard() {
 
     // Today highlight
     if (dateVal === `${year}-${String(month).padStart(2,'0')}-${dayKey}`) {
-      ctx.strokeStyle = config.color1;
+      ctx.strokeStyle = season.color;
       ctx.lineWidth = 3;
       roundRect(ctx, x, y, cellSize, cellSize, 12);
       ctx.stroke();
