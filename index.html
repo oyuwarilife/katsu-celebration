@@ -645,7 +645,6 @@ function renderCard() {
   // Monthly paw count
   const stampedDays = Object.keys(stamps).filter(k => stamps[k].length > 0).length;
   const totalPaws = Object.values(stamps).reduce((sum, d) => sum + d.length, 0);
-  const daysInMonth = new Date(year, month, 0).getDate();
   const pct = Math.round((stampedDays / daysInMonth) * 100);
 
   const statY = H - 130;
