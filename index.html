@@ -520,19 +520,19 @@ const C = {
 
 const MSGS = {
   morning: [
-    ["朝から動けた自分、すごい!", "まだ世界が静かなうちに\n自分の時間を作れた。\nそれだけで十分えらい。"],
-    ["朝活おつかれさま!", "眠い目をこすりながらでも\n動いた。その一歩が\n未来を変えていく。"],
-    ["朝の自分、最高!", "早起きの価値は\n「今日も自分を選んだ」こと。\nその積み重ねが全て。"],
+    ["朝活に参加しました!", ""],
+    ["朝活やりました!", ""],
+    ["朝活クリア!", ""],
   ],
   afternoon: [
-    ["昼活おつかれさま!", "日中のど真ん中で\n自分の時間を確保できた。\nそれってすごいこと。"],
-    ["やるじゃん!", "忙しい日中に\n自分のために時間を使えた。\nその判断力、さすが。"],
-    ["昼活、完了!", "太陽の下でがんばった自分に\n拍手。午後もこの調子で\nいけるよ。"],
+    ["昼活に参加しました!", ""],
+    ["昼活やりました!", ""],
+    ["昼活クリア!", ""],
   ],
   evening: [
-    ["夜活おつかれさま!", "1日の終わりに\nもうひと踏ん張りできた。\n今日の自分に乾杯。"],
-    ["おつかれさまでした!", "夜の静かな時間を\n自分のために使えた。\n明日もきっと大丈夫。"],
-    ["今日もがんばった!", "疲れた体で\nそれでも動いた自分、\n本当にえらいよ。"],
+    ["夜活に参加しました!", ""],
+    ["夜活やりました!", ""],
+    ["夜活クリア!", ""],
   ],
 };
 
@@ -711,131 +711,144 @@ function renderCard() {
   const canvas = document.getElementById('cardCanvas');
   const ctx = canvas.getContext('2d');
   const W = 1080, H = 1080;
+  const cx = W / 2;
 
-  // Background - solid white base
+  // Background - white
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, W, H);
 
-  // Soft color accent at top & bottom edges
-  const topGrad = ctx.createLinearGradient(0, 0, 0, 350);
-  topGrad.addColorStop(0, config.color2);
-  topGrad.addColorStop(1, 'rgba(255,255,255,0)');
-  ctx.fillStyle = topGrad;
-  ctx.fillRect(0, 0, W, 350);
+  // Subtle radial glow behind medal
+  const glow = ctx.createRadialGradient(cx, 420, 50, cx, 420, 400);
+  glow.addColorStop(0, config.color2);
+  glow.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
 
-  const btmGrad = ctx.createLinearGradient(0, H - 200, 0, H);
-  btmGrad.addColorStop(0, 'rgba(255,255,255,0)');
-  btmGrad.addColorStop(1, config.color2 + '66');
-  ctx.fillStyle = btmGrad;
-  ctx.fillRect(0, H - 200, W, 200);
-
-  // Decorative circles (subtle)
-  ctx.globalAlpha = 0.06;
+  // --- Medal ribbon (V shape) ---
   ctx.fillStyle = config.color1;
-  ctx.beginPath(); ctx.arc(120, 120, 180, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(960, 960, 220, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha = 0.15;
+  ctx.beginPath();
+  ctx.moveTo(cx - 120, 200);
+  ctx.lineTo(cx, 380);
+  ctx.lineTo(cx + 120, 200);
+  ctx.lineTo(cx + 160, 200);
+  ctx.lineTo(cx, 420);
+  ctx.lineTo(cx - 160, 200);
+  ctx.closePath();
+  ctx.fill();
   ctx.globalAlpha = 1;
 
-  // Border frame
+  // --- Medal outer circle ---
+  const medalY = 380;
+  const medalR = 180;
+
+  // Medal shadow
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.12)';
+  ctx.shadowBlur = 30;
+  ctx.shadowOffsetY = 8;
+  ctx.beginPath(); ctx.arc(cx, medalY, medalR, 0, Math.PI * 2);
+  ctx.fillStyle = config.color2;
+  ctx.fill();
+  ctx.restore();
+
+  // Medal gradient fill
+  const medalGrad = ctx.createRadialGradient(cx - 40, medalY - 40, 20, cx, medalY, medalR);
+  medalGrad.addColorStop(0, '#fff');
+  medalGrad.addColorStop(0.3, config.color2);
+  medalGrad.addColorStop(1, config.color1 + '55');
+  ctx.beginPath(); ctx.arc(cx, medalY, medalR, 0, Math.PI * 2);
+  ctx.fillStyle = medalGrad;
+  ctx.fill();
+
+  // Medal border ring
+  ctx.beginPath(); ctx.arc(cx, medalY, medalR, 0, Math.PI * 2);
   ctx.strokeStyle = config.color1;
-  ctx.lineWidth = 5;
-  ctx.globalAlpha = 0.5;
-  roundRect(ctx, 40, 40, W-80, H-80, 36);
+  ctx.lineWidth = 6;
   ctx.stroke();
-  ctx.globalAlpha = 1;
 
-  // Avatar
-  let contentStartY = 180;
+  // Inner ring
+  ctx.beginPath(); ctx.arc(cx, medalY, medalR - 18, 0, Math.PI * 2);
+  ctx.strokeStyle = config.color1 + '44';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Avatar inside medal (if exists)
   if (avatarImg && avatarImg.complete && avatarImg.naturalWidth > 0) {
-    const cx = W/2, cy = 250, r = 110;
-    contentStartY = 400;
-
-    // Ring
-    ctx.save();
-    ctx.shadowColor = config.color1;
-    ctx.shadowBlur = 40;
-    ctx.beginPath(); ctx.arc(cx, cy, r+8, 0, Math.PI*2);
-    ctx.fillStyle = config.color1;
-    ctx.fill();
-    ctx.restore();
-
-    ctx.beginPath(); ctx.arc(cx, cy, r+6, 0, Math.PI*2);
+    const avatarR = 80;
+    // White ring behind avatar
+    ctx.beginPath(); ctx.arc(cx, medalY - 10, avatarR + 5, 0, Math.PI * 2);
     ctx.fillStyle = '#fff';
     ctx.fill();
 
     ctx.save();
-    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.clip();
+    ctx.beginPath(); ctx.arc(cx, medalY - 10, avatarR, 0, Math.PI * 2); ctx.clip();
     const imgSize = Math.max(avatarImg.naturalWidth, avatarImg.naturalHeight);
     const sx = (avatarImg.naturalWidth - imgSize) / 2;
     const sy = (avatarImg.naturalHeight - imgSize) / 2;
-    ctx.drawImage(avatarImg, sx, sy, imgSize, imgSize, cx-r, cy-r, r*2, r*2);
+    ctx.drawImage(avatarImg, sx, sy, imgSize, imgSize, cx - avatarR, medalY - 10 - avatarR, avatarR * 2, avatarR * 2);
     ctx.restore();
 
-    // Crown/sparkle above avatar
-    ctx.font = '60px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
+    // Icon below avatar in medal
+    ctx.font = '44px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(config.crown, cx, cy - r - 20);
+    ctx.fillText(config.icon, cx, medalY + 110);
+  } else {
+    // Icon centered in medal if no avatar
+    ctx.font = '80px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(config.icon, cx, medalY + 25);
   }
 
-  // Activity icon
-  ctx.font = '56px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
+  // --- Text below medal ---
   ctx.textAlign = 'center';
-  ctx.fillText(config.icon, W/2, contentStartY + 10);
 
-  // Activity label - bold, high contrast
-  ctx.save();
-  ctx.shadowColor = 'rgba(0,0,0,0.08)';
-  ctx.shadowBlur = 6;
-  ctx.shadowOffsetY = 2;
-  ctx.font = 'bold 44px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = config.textColor;
-  ctx.fillText(`${config.label} おつかれさま!`, W/2, contentStartY + 78);
-  ctx.restore();
-
-  // Title - large, dark, readable
+  // Main message
   ctx.save();
   ctx.shadowColor = 'rgba(0,0,0,0.06)';
   ctx.shadowBlur = 4;
   ctx.shadowOffsetY = 2;
-  ctx.font = '900 54px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.font = '900 60px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
   ctx.fillStyle = '#2d2d2d';
-  const titleLines = pick[0].split('\n');
-  let ty = contentStartY + 165;
-  for (const line of titleLines) {
-    ctx.fillText(line, W/2, ty);
-    ty += 68;
-  }
+  ctx.fillText(pick[0], cx, 650);
   ctx.restore();
 
-  // Sub message - dark gray, readable
-  ctx.font = '32px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = '#555';
-  const msgLines = pick[1].split('\n');
-  ty += 8;
-  for (const line of msgLines) {
-    ctx.fillText(line, W/2, ty);
-    ty += 50;
+  // Date - prominent
+  ctx.font = 'bold 36px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.fillStyle = config.color1;
+  ctx.fillText(dateStr, cx, 720);
+
+  // Time
+  ctx.font = '28px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.fillStyle = '#999';
+  ctx.fillText(timeStr, cx, 768);
+
+  // Decorative stars
+  ctx.font = '32px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
+  ctx.fillText('\u{2728}', cx - 200, 655);
+  ctx.fillText('\u{2728}', cx + 200, 655);
+
+  // Stats at bottom
+  if (stats.streak > 1) {
+    ctx.fillStyle = config.color1 + '18';
+    roundRect(ctx, cx - 160, 830, 320, 55, 28);
+    ctx.fill();
+    ctx.font = 'bold 28px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+    ctx.fillStyle = config.textColor;
+    ctx.fillText(`${stats.streak} days streak!`, cx, 866);
   }
 
-  // Stats pill
-  const statsY = H - 160;
-  ctx.fillStyle = config.color1 + '20';
-  roundRect(ctx, W/2 - 180, statsY - 28, 360, 45, 22);
-  ctx.fill();
-  ctx.font = 'bold 26px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = config.textColor;
-  let statsText = stats.streak > 1 ? `${stats.streak}-day streak!` : `Total: ${stats.total}`;
-  ctx.fillText(statsText, W/2, statsY);
+  // Bottom line decoration
+  ctx.strokeStyle = config.color1 + '33';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx - 200, 940); ctx.lineTo(cx + 200, 940);
+  ctx.stroke();
 
-  // Date - darker
-  ctx.font = '26px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = '#888';
-  ctx.fillText(`${dateStr}  ${timeStr}`, W/2, statsY + 55);
-
-  // Watermark
-  ctx.font = '18px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = '#ccc';
-  ctx.fillText('katsu-celebration', W/2, H - 65);
+  // Footer
+  ctx.font = '22px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.fillStyle = '#bbb';
+  ctx.fillText('katsu-celebration', cx, 985);
 
   return canvas;
 }
