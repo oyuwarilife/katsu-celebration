@@ -3,112 +3,162 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>おつかれさま! - 朝活・昼活・夜活</title>
+<title>おつかれさま!</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap');
   :root {
     --primary: #ff6b9d;
     --primary-light: #ffd4e5;
     --accent: #ffc107;
     --bg: #fff8fa;
     --text: #4a3347;
-    --shadow: 0 8px 32px rgba(255,107,157,0.15);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    font-family: 'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif;
+    font-family: 'Zen Maru Gothic', 'Hiragino Sans', sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow-x: hidden;
+  }
+
+  /* Floating background shapes */
+  .bg-shapes {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .bg-shapes span {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.08;
+    animation: float 8s ease-in-out infinite;
+  }
+  .bg-shapes span:nth-child(1) { width:200px; height:200px; background:#ff6b9d; top:10%; left:5%; animation-delay:0s; }
+  .bg-shapes span:nth-child(2) { width:150px; height:150px; background:#ffc107; top:60%; right:10%; animation-delay:2s; }
+  .bg-shapes span:nth-child(3) { width:100px; height:100px; background:#7b68ee; bottom:15%; left:20%; animation-delay:4s; }
+  .bg-shapes span:nth-child(4) { width:120px; height:120px; background:#4ecdc4; top:20%; right:25%; animation-delay:1s; }
+  @keyframes float {
+    0%,100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.1); }
   }
 
   .container {
     text-align: center;
-    padding: 2rem;
+    padding: 2rem 1.5rem;
     max-width: 440px;
     width: 100%;
+    position: relative;
+    z-index: 1;
   }
 
   /* Avatar */
   .avatar-area {
-    width: 130px;
-    height: 130px;
-    margin: 0 auto 1.5rem;
+    width: 140px; height: 140px;
+    margin: 0 auto 1.2rem;
     cursor: pointer;
+    position: relative;
   }
   .avatar-area input { display: none; }
   .avatar-circle {
-    width: 130px;
-    height: 130px;
+    width: 140px; height: 140px;
     border-radius: 50%;
-    border: 4px solid var(--primary);
-    background: var(--primary-light);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 4px solid transparent;
+    background: linear-gradient(#fff,#fff) padding-box, linear-gradient(135deg, #ff6b9d, #ffc107, #7b68ee) border-box;
+    display: flex; align-items: center; justify-content: center;
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
-    box-shadow: var(--shadow);
+    box-shadow: 0 8px 32px rgba(255,107,157,0.2);
   }
   .avatar-circle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 40px rgba(255,107,157,0.25);
+    transform: scale(1.08) rotate(3deg);
+    box-shadow: 0 12px 40px rgba(255,107,157,0.35);
   }
-  .avatar-circle img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .avatar-circle img { width:100%; height:100%; object-fit:cover; }
+  .avatar-placeholder { font-size:0.8rem; color:var(--primary); line-height:1.4; }
+
+  /* Sparkle around avatar */
+  .sparkle {
+    position: absolute;
+    width: 20px; height: 20px;
+    animation: sparkle 2s ease-in-out infinite;
   }
-  .avatar-placeholder {
-    font-size: 0.8rem;
-    color: var(--primary);
-    line-height: 1.4;
+  .sparkle::before {
+    content: '';
+    position: absolute;
+    width: 100%; height: 100%;
+    background: var(--accent);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+  .sparkle:nth-child(2) { top:-5px; right:10px; animation-delay:0.3s; }
+  .sparkle:nth-child(3) { top:20px; left:-8px; animation-delay:0.8s; width:14px; height:14px; }
+  .sparkle:nth-child(4) { bottom:10px; right:-5px; animation-delay:1.2s; width:16px; height:16px; }
+  @keyframes sparkle {
+    0%,100% { transform: scale(0.5) rotate(0deg); opacity:0.3; }
+    50% { transform: scale(1.2) rotate(180deg); opacity:1; }
   }
 
   h1 {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
+    font-weight: 900;
     margin-bottom: 0.3rem;
-    color: var(--primary);
+    background: linear-gradient(135deg, #ff6b9d, #ff8fab, #ffc107);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   .subtitle {
     font-size: 0.85rem;
-    color: #aaa;
+    color: #bbb;
     margin-bottom: 2rem;
   }
 
   /* Activity selector */
   .activity-selector {
-    display: flex;
-    gap: 0.6rem;
+    display: flex; gap: 0.7rem;
     justify-content: center;
     margin-bottom: 2rem;
   }
   .act-btn {
-    border: 2.5px solid var(--primary-light);
+    border: none;
     background: #fff;
     color: var(--text);
-    border-radius: 16px;
-    padding: 12px 20px;
+    border-radius: 20px;
+    padding: 16px 10px;
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.25s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    min-width: 100px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
+    min-width: 105px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    font-family: inherit;
   }
-  .act-btn .act-icon { font-size: 1.6rem; }
-  .act-btn .act-label { font-size: 0.85rem; font-weight: 600; }
-  .act-btn:hover { border-color: var(--primary); transform: translateY(-2px); }
-  .act-btn.active {
-    background: var(--primary);
+  .act-btn .act-icon { font-size: 2rem; transition: transform 0.3s; }
+  .act-btn .act-label { font-size: 0.9rem; font-weight: 700; }
+  .act-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  }
+  .act-btn:hover .act-icon { transform: scale(1.2); }
+  .act-btn.active-morning {
+    background: linear-gradient(135deg, #FF9A76, #FFECD2);
+    color: #8B4513;
+    box-shadow: 0 6px 24px rgba(255,154,118,0.4);
+    transform: translateY(-4px) scale(1.05);
+  }
+  .act-btn.active-afternoon {
+    background: linear-gradient(135deg, #4ECDC4, #a8e6cf);
+    color: #1a5c56;
+    box-shadow: 0 6px 24px rgba(78,205,196,0.4);
+    transform: translateY(-4px) scale(1.05);
+  }
+  .act-btn.active-evening {
+    background: linear-gradient(135deg, #7B68EE, #c4b5fd);
     color: #fff;
-    border-color: var(--primary);
-    box-shadow: 0 4px 16px rgba(255,107,157,0.35);
+    box-shadow: 0 6px 24px rgba(123,104,238,0.4);
+    transform: translateY(-4px) scale(1.05);
   }
 
   /* Complete button */
@@ -119,188 +169,237 @@
     font-size: 1.15rem;
     cursor: pointer;
     transition: all 0.3s;
-    font-weight: 700;
+    font-weight: 900;
     letter-spacing: 0.05em;
+    font-family: inherit;
   }
   .btn-primary {
-    background: linear-gradient(135deg, var(--primary), #ff8fab);
+    background: linear-gradient(135deg, #ff6b9d, #ff8fab, #ffc107);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
     color: #fff;
-    box-shadow: 0 4px 20px rgba(255,107,157,0.4);
+    box-shadow: 0 6px 24px rgba(255,107,157,0.4);
+    font-size: 1.3rem;
+    padding: 18px 56px;
   }
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(255,107,157,0.5);
+  @keyframes gradientShift {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
-  .btn-share {
-    background: linear-gradient(135deg, #333, #000);
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 36px rgba(255,107,157,0.5);
+  }
+  .btn-primary:disabled { cursor: not-allowed; }
+
+  .btn-threads {
+    background: #000;
     color: #fff;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    margin-top: 0.8rem;
-    padding: 12px 36px;
-    font-size: 0.95rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    padding: 14px 40px;
+    font-size: 1rem;
   }
-  .btn-share:hover {
+  .btn-threads:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(0,0,0,0.4);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35);
   }
-  .btn-download {
+  .btn-save {
     background: linear-gradient(135deg, #4ecdc4, #44b09e);
     color: #fff;
-    box-shadow: 0 4px 20px rgba(78,205,196,0.4);
-    margin-top: 0.5rem;
-    padding: 12px 36px;
-    font-size: 0.95rem;
+    box-shadow: 0 4px 16px rgba(78,205,196,0.35);
+    padding: 14px 40px;
+    font-size: 1rem;
   }
-  .btn-download:hover {
+  .btn-save:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(78,205,196,0.5);
+    box-shadow: 0 6px 24px rgba(78,205,196,0.5);
   }
   .btn-back {
-    background: #f0f0f0;
-    color: #999;
-    padding: 12px 36px;
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
+    background: none;
+    color: #ccc;
+    padding: 10px 30px;
+    font-size: 0.85rem;
+    text-decoration: underline;
   }
-  .btn-back:hover { background: #e0e0e0; color: #666; }
-  .share-note {
-    font-size: 0.75rem;
-    color: #bbb;
-    margin-top: 0.6rem;
-    line-height: 1.5;
-  }
+  .btn-back:hover { color: #999; }
 
   /* Stats bar */
   .stats {
-    display: flex;
-    gap: 1.2rem;
+    display: flex; gap: 0.8rem;
     justify-content: center;
     margin-top: 2.5rem;
-    font-size: 0.8rem;
-    color: #bbb;
   }
-  .stats span { font-weight: 700; color: var(--primary); }
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 12px 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    min-width: 90px;
+  }
+  .stat-card .stat-num {
+    font-size: 1.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ff6b9d, #ffc107);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-card .stat-label {
+    font-size: 0.7rem;
+    color: #bbb;
+    margin-top: 2px;
+  }
 
-  /* Celebration overlay */
+  /* ===== CELEBRATION ===== */
   .celebration {
-    position: fixed;
-    inset: 0;
-    background: rgba(255,248,250,0.97);
+    position: fixed; inset: 0;
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 100;
-    animation: fadeIn 0.5s;
     padding: 2rem;
+    overflow: hidden;
   }
   .celebration.show { display: flex; }
-  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  .celeb-bg {
+    position: absolute; inset: 0;
+    animation: celebBgIn 0.6s ease-out both;
+  }
+  @keyframes celebBgIn {
+    from { opacity:0; transform:scale(0); border-radius:50%; }
+    to { opacity:1; transform:scale(1); border-radius:0; }
+  }
+  .celeb-content {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    align-items: center;
+  }
 
-  .celebration .avatar-celebrate {
-    width: 150px;
-    height: 150px;
+  .celeb-crown {
+    font-size: 3rem;
+    animation: crownBounce 1s ease-in-out infinite;
+    margin-bottom: -10px;
+  }
+  @keyframes crownBounce {
+    0%,100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-8px) rotate(5deg); }
+  }
+
+  .celeb-avatar {
+    width: 160px; height: 160px;
     border-radius: 50%;
-    border: 5px solid var(--accent);
+    border: 6px solid #fff;
     overflow: hidden;
+    animation: avatarPop 0.6s 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    box-shadow: 0 0 0 4px var(--accent), 0 0 60px rgba(255,193,7,0.4);
     margin-bottom: 1.2rem;
-    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    box-shadow: 0 0 40px rgba(255,193,7,0.4), 0 0 80px rgba(255,107,157,0.2);
   }
-  .celebration .avatar-celebrate img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  @keyframes bounceIn {
-    0% { transform: scale(0); }
-    60% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+  .celeb-avatar img { width:100%; height:100%; object-fit:cover; }
+  @keyframes avatarPop {
+    from { transform: scale(0) rotate(-20deg); opacity:0; }
+    to { transform: scale(1) rotate(0deg); opacity:1; }
   }
 
-  .celebration h2 {
-    font-size: 2rem;
-    color: var(--primary);
-    margin-bottom: 0.4rem;
-    animation: slideUp 0.5s 0.3s both;
-  }
-  .celebration .celeb-activity {
-    font-size: 1rem;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 0.8rem;
+  .celeb-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.15);
+    margin-bottom: 0.3rem;
     animation: slideUp 0.5s 0.4s both;
   }
-  .celebration .msg {
-    font-size: 1.05rem;
-    color: var(--text);
-    margin-bottom: 0.3rem;
+  .celeb-activity-label {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.85);
+    font-weight: 700;
+    margin-bottom: 1rem;
     animation: slideUp 0.5s 0.5s both;
-    max-width: 340px;
-    line-height: 1.8;
+  }
+  .celeb-msg {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.95);
+    max-width: 320px;
+    line-height: 2;
     white-space: pre-line;
+    animation: slideUp 0.5s 0.6s both;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.1);
   }
-  .celebration .streak-info {
-    font-size: 0.9rem;
-    color: var(--primary);
-    margin: 1rem 0 1.5rem;
+  .celeb-streak {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.8);
+    margin: 1.2rem 0 1.8rem;
     animation: slideUp 0.5s 0.7s both;
+    background: rgba(255,255,255,0.15);
+    border-radius: 30px;
+    padding: 8px 24px;
+    backdrop-filter: blur(4px);
   }
-  .celebration .btn-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
+  .celeb-btns {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 0.6rem;
     animation: slideUp 0.5s 0.9s both;
   }
   @keyframes slideUp {
-    from { opacity:0; transform:translateY(20px); }
+    from { opacity:0; transform:translateY(30px); }
     to { opacity:1; transform:translateY(0); }
   }
 
-  /* Confetti canvas */
-  #confetti {
-    position: fixed;
-    inset: 0;
-    z-index: 101;
-    pointer-events: none;
+  /* Stars burst animation */
+  .stars-burst {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    z-index: 0;
+  }
+  .stars-burst span {
+    position: absolute;
+    font-size: 1.5rem;
+    animation: starBurst 1.5s ease-out both;
+  }
+  @keyframes starBurst {
+    0% { transform: translate(0,0) scale(0) rotate(0deg); opacity:1; }
+    100% { opacity:0; }
   }
 
-  /* Sound toggle */
+  #confetti { position: fixed; inset: 0; z-index: 101; pointer-events: none; }
+
   .sound-toggle {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: opacity 0.2s;
-    z-index: 10;
+    position: fixed; top: 1rem; right: 1rem;
+    background: rgba(255,255,255,0.8); border: none;
+    font-size: 1.3rem; cursor: pointer;
+    opacity: 0.6; transition: opacity 0.2s;
+    z-index: 200; border-radius: 50%;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
   .sound-toggle:hover { opacity: 1; }
 
-  /* Hidden canvas for image generation */
   #cardCanvas { display: none; }
 </style>
 </head>
 <body>
 
+<div class="bg-shapes">
+  <span></span><span></span><span></span><span></span>
+</div>
+
 <button class="sound-toggle" id="soundToggle" title="Sound on/off">&#x1f50a;</button>
 
 <div class="container" id="mainScreen">
   <div class="avatar-area" onclick="document.getElementById('avatarInput').click()">
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
     <div class="avatar-circle" id="avatarCircle">
-      <div class="avatar-placeholder" id="avatarPlaceholder">
-        tap to<br>upload icon
-      </div>
+      <div class="avatar-placeholder">tap to<br>upload</div>
     </div>
     <input type="file" id="avatarInput" accept="image/*">
   </div>
 
-  <h1>Today's Activity</h1>
-  <p class="subtitle">Pick your activity & celebrate yourself</p>
+  <h1>Today's Katsu!</h1>
+  <p class="subtitle">select & celebrate yourself</p>
 
   <div class="activity-selector">
     <button class="act-btn" data-type="morning" onclick="selectActivity(this)">
@@ -317,29 +416,42 @@
     </button>
   </div>
 
-  <button class="btn btn-primary" id="completeBtn" onclick="completeActivity()" disabled style="opacity:0.5">
+  <button class="btn btn-primary" id="completeBtn" onclick="completeActivity()" disabled style="opacity:0.4">
     おつかれさま!
   </button>
 
   <div class="stats">
-    <div>Today <span id="todayCount">0</span></div>
-    <div>Total <span id="totalCount">0</span></div>
-    <div>Streak <span id="streakCount">0</span> days</div>
+    <div class="stat-card">
+      <div class="stat-num" id="todayCount">0</div>
+      <div class="stat-label">TODAY</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="totalCount">0</div>
+      <div class="stat-label">TOTAL</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="streakCount">0</div>
+      <div class="stat-label">STREAK</div>
+    </div>
   </div>
 </div>
 
 <!-- Celebration -->
 <div class="celebration" id="celebration">
-  <div class="avatar-celebrate" id="celebAvatar"></div>
-  <h2 id="celebTitle"></h2>
-  <div class="celeb-activity" id="celebActivity"></div>
-  <div class="msg" id="celebMsg"></div>
-  <div class="streak-info" id="celebStreak"></div>
-  <div class="btn-group">
-    <button class="btn btn-share" onclick="shareToThreads()">Threads share</button>
-    <button class="btn btn-download" onclick="downloadCard()">save image</button>
-    <button class="btn btn-back" onclick="closeCelebration()">back</button>
-    <div class="share-note" id="shareNote"></div>
+  <div class="celeb-bg" id="celebBg"></div>
+  <div class="stars-burst" id="starsBurst"></div>
+  <div class="celeb-content">
+    <div class="celeb-crown" id="celebCrown"></div>
+    <div class="celeb-avatar" id="celebAvatar"></div>
+    <div class="celeb-title" id="celebTitle"></div>
+    <div class="celeb-activity-label" id="celebActivity"></div>
+    <div class="celeb-msg" id="celebMsg"></div>
+    <div class="celeb-streak" id="celebStreak"></div>
+    <div class="celeb-btns">
+      <button class="btn btn-threads" onclick="shareToThreads()">Threads</button>
+      <button class="btn btn-save" onclick="downloadCard()">&#x1f4f7; save image</button>
+      <button class="btn btn-back" onclick="closeCelebration()">back</button>
+    </div>
   </div>
 </div>
 
@@ -347,42 +459,41 @@
 <canvas id="cardCanvas" width="1080" height="1080"></canvas>
 
 <script>
-// --- State ---
 let selectedType = null;
 let avatarDataUrl = null;
 let avatarImg = null;
 let soundOn = true;
 let lastCelebData = {};
 
-const activityConfig = {
+const C = {
   morning: {
-    label: '朝活',
-    icon: '\u{1F305}',
+    label: '朝活', icon: '\u{1F305}',
+    grad: 'linear-gradient(135deg, #FF9A76, #FFECD2, #fff5e6)',
     color1: '#FF9A76', color2: '#FFECD2',
-    gradStart: '#ff9a76', gradEnd: '#ffecd2',
     textColor: '#8B4513',
+    crown: '\u{2728}',
   },
   afternoon: {
-    label: '昼活',
-    icon: '\u{2600}\u{FE0F}',
+    label: '昼活', icon: '\u{2600}\u{FE0F}',
+    grad: 'linear-gradient(135deg, #4ECDC4, #a8e6cf, #e0f7fa)',
     color1: '#4ECDC4', color2: '#E0F7FA',
-    gradStart: '#4ecdc4', gradEnd: '#e0f7fa',
     textColor: '#1a6b66',
+    crown: '\u{1F31F}',
   },
   evening: {
-    label: '夜活',
-    icon: '\u{1F319}',
+    label: '夜活', icon: '\u{1F319}',
+    grad: 'linear-gradient(135deg, #7B68EE, #a78bfa, #e8e0ff)',
     color1: '#7B68EE', color2: '#E8E0FF',
-    gradStart: '#7b68ee', gradEnd: '#e8e0ff',
     textColor: '#3d3270',
+    crown: '\u{1FA77}',
   },
 };
 
-const celebMessages = {
+const MSGS = {
   morning: [
-    ["おはよう!\n朝から動けた自分、すごい!", "早起きは三文の徳。\nでも本当の価値は\n「今日も自分を選んだ」こと。"],
-    ["朝活おつかれさま!", "まだ世界が静かなうちに\n自分の時間を作れたこと、\nそれだけで十分えらい。"],
-    ["朝の自分、最高!", "眠い目をこすりながらでも\n動いた。その一歩が\n未来を変えていく。"],
+    ["朝から動けた自分、すごい!", "まだ世界が静かなうちに\n自分の時間を作れた。\nそれだけで十分えらい。"],
+    ["朝活おつかれさま!", "眠い目をこすりながらでも\n動いた。その一歩が\n未来を変えていく。"],
+    ["朝の自分、最高!", "早起きの価値は\n「今日も自分を選んだ」こと。\nその積み重ねが全て。"],
   ],
   afternoon: [
     ["昼活おつかれさま!", "日中のど真ん中で\n自分の時間を確保できた。\nそれってすごいこと。"],
@@ -411,8 +522,7 @@ function todayStr() {
 
 function updateStatsDisplay() {
   const s = loadStats();
-  const today = todayStr();
-  if (s.lastDate !== today) s.today = 0;
+  if (s.lastDate !== todayStr()) s.today = 0;
   document.getElementById('todayCount').textContent = s.today;
   document.getElementById('totalCount').textContent = s.total;
   document.getElementById('streakCount').textContent = s.streak;
@@ -457,8 +567,7 @@ document.getElementById('avatarInput').addEventListener('change', (e) => {
 
 function showAvatar() {
   if (!avatarDataUrl) return;
-  document.getElementById('avatarCircle').innerHTML =
-    `<img src="${avatarDataUrl}" alt="icon">`;
+  document.getElementById('avatarCircle').innerHTML = `<img src="${avatarDataUrl}" alt="icon">`;
 }
 
 function loadAvatarImg() {
@@ -472,9 +581,11 @@ if (savedAvatar) { avatarDataUrl = savedAvatar; loadAvatarImg(); showAvatar(); }
 
 // --- Activity selector ---
 function selectActivity(btn) {
-  document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('.act-btn').forEach(b => {
+    b.classList.remove('active-morning','active-afternoon','active-evening');
+  });
   selectedType = btn.dataset.type;
+  btn.classList.add('active-' + selectedType);
   const completeBtn = document.getElementById('completeBtn');
   completeBtn.disabled = false;
   completeBtn.style.opacity = '1';
@@ -490,97 +601,133 @@ function completeActivity() {
 
 // --- Celebration ---
 function showCelebration(stats) {
-  const config = activityConfig[selectedType];
-  const msgs = celebMessages[selectedType];
+  const config = C[selectedType];
+  const msgs = MSGS[selectedType];
   const pick = msgs[Math.floor(Math.random() * msgs.length)];
-
   const now = new Date();
   const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
   const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
-  lastCelebData = { config, pick, stats, dateStr, timeStr, type: selectedType };
+  lastCelebData = { config, pick, stats, dateStr, timeStr };
 
-  const celeb = document.getElementById('celebration');
+  // Background
+  document.getElementById('celebBg').style.background = config.grad;
+
+  // Crown
+  document.getElementById('celebCrown').textContent = config.crown;
+
+  // Avatar
   const avatarEl = document.getElementById('celebAvatar');
-
   if (avatarDataUrl) {
     avatarEl.innerHTML = `<img src="${avatarDataUrl}" alt="icon">`;
     avatarEl.style.display = '';
-    avatarEl.style.borderColor = config.color1;
-    avatarEl.style.boxShadow = `0 0 40px ${config.color1}66, 0 0 80px ${config.color1}33`;
   } else {
     avatarEl.style.display = 'none';
   }
 
   document.getElementById('celebTitle').textContent = pick[0];
-  document.getElementById('celebTitle').style.color = config.color1;
   document.getElementById('celebActivity').textContent = `${config.icon} ${config.label} completed - ${timeStr}`;
-  document.getElementById('celebActivity').style.color = config.color1;
   document.getElementById('celebMsg').textContent = pick[1];
 
-  let streakText = `Today: ${stats.today} activities`;
+  let streakText = `Today: ${stats.today}`;
   if (stats.streak > 1) streakText += ` | ${stats.streak}-day streak!`;
   document.getElementById('celebStreak').textContent = streakText;
-  document.getElementById('celebStreak').style.color = config.color1;
 
-  celeb.classList.add('show');
+  // Stars burst
+  const burst = document.getElementById('starsBurst');
+  burst.innerHTML = '';
+  const stars = ['\u{2B50}','\u{2728}','\u{1F31F}','\u{1FA77}','\u{2764}\u{FE0F}','\u{1F389}'];
+  for (let i = 0; i < 12; i++) {
+    const s = document.createElement('span');
+    s.textContent = stars[i % stars.length];
+    const angle = (i / 12) * Math.PI * 2;
+    const dist = 120 + Math.random() * 80;
+    s.style.cssText = `animation-delay:${i*0.08}s;--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;`;
+    s.style.animation = `starBurst 1.2s ${i*0.08}s ease-out both`;
+    s.style.setProperty('animation-name','none');
+    // Use custom keyframe per star
+    s.animate([
+      { transform: 'translate(0,0) scale(0) rotate(0deg)', opacity: 1 },
+      { transform: `translate(${Math.cos(angle)*dist}px,${Math.sin(angle)*dist}px) scale(1.5) rotate(${360+Math.random()*180}deg)`, opacity: 0 },
+    ], { duration: 1200, delay: i * 80, easing: 'ease-out', fill: 'both' });
+    burst.appendChild(s);
+  }
+
+  document.getElementById('celebration').classList.add('show');
   launchConfetti(config.color1);
 }
 
 function closeCelebration() {
   document.getElementById('celebration').classList.remove('show');
-  document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.act-btn').forEach(b => {
+    b.classList.remove('active-morning','active-afternoon','active-evening');
+  });
   selectedType = null;
-  const completeBtn = document.getElementById('completeBtn');
-  completeBtn.disabled = true;
-  completeBtn.style.opacity = '0.5';
+  document.getElementById('completeBtn').disabled = true;
+  document.getElementById('completeBtn').style.opacity = '0.4';
 }
 
-// --- Card rendering (shared) ---
+// --- Threads intent ---
+function shareToThreads() {
+  const { config, dateStr } = lastCelebData;
+  const text = `${config.icon} ${config.label}おつかれさま!\n${dateStr}`;
+  const url = `https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+
+// --- Card rendering & download ---
 function renderCard() {
   const { config, pick, stats, dateStr, timeStr } = lastCelebData;
   const canvas = document.getElementById('cardCanvas');
   const ctx = canvas.getContext('2d');
   const W = 1080, H = 1080;
 
-  // Background gradient
+  // Background
   const grad = ctx.createLinearGradient(0, 0, W, H);
-  grad.addColorStop(0, config.gradEnd);
+  grad.addColorStop(0, config.color1);
+  grad.addColorStop(0.5, config.color2);
   grad.addColorStop(1, '#ffffff');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
   // Decorative circles
-  ctx.globalAlpha = 0.08;
-  ctx.fillStyle = config.color1;
-  ctx.beginPath(); ctx.arc(150, 150, 200, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(930, 900, 250, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(900, 200, 120, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha = 0.1;
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(150, 150, 220, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(930, 900, 280, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(900, 200, 140, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(100, 800, 160, 0, Math.PI*2); ctx.fill();
   ctx.globalAlpha = 1;
 
-  // Border frame
+  // Inner white card
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  roundRect(ctx, 60, 60, W-120, H-120, 40);
+  ctx.fill();
+
+  // Border
   ctx.strokeStyle = config.color1;
-  ctx.lineWidth = 6;
-  ctx.globalAlpha = 0.3;
-  roundRect(ctx, 30, 30, W-60, H-60, 40);
+  ctx.lineWidth = 4;
+  ctx.globalAlpha = 0.4;
+  roundRect(ctx, 60, 60, W-120, H-120, 40);
   ctx.stroke();
   ctx.globalAlpha = 1;
 
-  // Avatar (if exists)
-  let contentStartY = 200;
+  // Avatar
+  let contentStartY = 180;
   if (avatarImg && avatarImg.complete && avatarImg.naturalWidth > 0) {
-    const cx = W/2, cy = 240, r = 100;
-    contentStartY = 380;
+    const cx = W/2, cy = 250, r = 110;
+    contentStartY = 400;
 
+    // Ring
     ctx.save();
     ctx.shadowColor = config.color1;
-    ctx.shadowBlur = 30;
-    ctx.beginPath(); ctx.arc(cx, cy, r+6, 0, Math.PI*2);
+    ctx.shadowBlur = 40;
+    ctx.beginPath(); ctx.arc(cx, cy, r+8, 0, Math.PI*2);
     ctx.fillStyle = config.color1;
     ctx.fill();
     ctx.restore();
 
-    ctx.beginPath(); ctx.arc(cx, cy, r+5, 0, Math.PI*2);
+    ctx.beginPath(); ctx.arc(cx, cy, r+6, 0, Math.PI*2);
     ctx.fillStyle = '#fff';
     ctx.fill();
 
@@ -591,109 +738,68 @@ function renderCard() {
     const sy = (avatarImg.naturalHeight - imgSize) / 2;
     ctx.drawImage(avatarImg, sx, sy, imgSize, imgSize, cx-r, cy-r, r*2, r*2);
     ctx.restore();
+
+    // Crown/sparkle above avatar
+    ctx.font = '60px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(config.crown, cx, cy - r - 20);
   }
 
   // Activity icon + label
-  ctx.font = '60px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
+  ctx.font = '52px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(config.icon, W/2, contentStartY + 10);
 
-  ctx.font = 'bold 36px "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.font = 'bold 40px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
   ctx.fillStyle = config.color1;
-  ctx.fillText(`${config.label} completed!`, W/2, contentStartY + 70);
+  ctx.fillText(`${config.label} おつかれさま!`, W/2, contentStartY + 75);
 
   // Title
-  ctx.font = 'bold 48px "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.font = '900 52px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
   ctx.fillStyle = config.textColor;
   const titleLines = pick[0].split('\n');
-  let ty = contentStartY + 150;
+  let ty = contentStartY + 160;
   for (const line of titleLines) {
     ctx.fillText(line, W/2, ty);
-    ty += 60;
+    ty += 65;
   }
 
   // Sub message
-  ctx.font = '30px "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = config.textColor + 'cc';
+  ctx.font = '32px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.fillStyle = config.textColor + 'bb';
   const msgLines = pick[1].split('\n');
-  ty += 10;
+  ty += 5;
   for (const line of msgLines) {
     ctx.fillText(line, W/2, ty);
-    ty += 46;
+    ty += 48;
   }
 
-  // Stats
-  const statsY = H - 160;
-  ctx.font = 'bold 28px "Hiragino Sans", "Meiryo", sans-serif';
+  // Stats pill
+  const statsY = H - 170;
+  ctx.fillStyle = config.color1 + '22';
+  roundRect(ctx, W/2 - 180, statsY - 28, 360, 45, 22);
+  ctx.fill();
+  ctx.font = 'bold 26px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
   ctx.fillStyle = config.color1;
-  let statsText = `${stats.streak} day streak`;
-  if (stats.streak <= 1) statsText = `Total: ${stats.total} activities`;
+  let statsText = stats.streak > 1 ? `${stats.streak}-day streak!` : `Total: ${stats.total} activities`;
   ctx.fillText(statsText, W/2, statsY);
 
-  ctx.font = '26px "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = '#999';
-  ctx.fillText(`${dateStr}  ${timeStr}`, W/2, statsY + 50);
+  // Date
+  ctx.font = '24px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.fillStyle = '#aaa';
+  ctx.fillText(`${dateStr}  ${timeStr}`, W/2, statsY + 55);
 
-  ctx.font = '20px "Hiragino Sans", "Meiryo", sans-serif';
-  ctx.fillStyle = '#ccc';
-  ctx.fillText('powered by katsu-celebration', W/2, H - 50);
+  // Watermark
+  ctx.font = '18px "Zen Maru Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+  ctx.fillStyle = '#ddd';
+  ctx.fillText('katsu-celebration', W/2, H - 75);
 
   return canvas;
 }
 
-function getCardBlob() {
-  return new Promise(resolve => {
-    renderCard().toBlob(blob => resolve(blob), 'image/png');
-  });
-}
-
-function getShareText() {
-  const { config, dateStr } = lastCelebData;
-  return `${config.icon} ${config.label}おつかれさま!\n${dateStr}`;
-}
-
-// --- Share to Threads ---
-async function shareToThreads() {
-  const note = document.getElementById('shareNote');
-  const text = getShareText();
-
-  // Try Web Share API with file (works on mobile)
-  if (navigator.canShare) {
-    try {
-      const blob = await getCardBlob();
-      const file = new File([blob], 'otsukare.png', { type: 'image/png' });
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          text: text,
-          files: [file],
-        });
-        note.textContent = '';
-        return;
-      }
-    } catch (e) {
-      if (e.name === 'AbortError') return; // user cancelled
-    }
-  }
-
-  // Fallback: download image + open Threads intent
-  const blob = await getCardBlob();
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.download = `${lastCelebData.dateStr.replace(/\./g,'-')}_${lastCelebData.config.label}_otsukare.png`;
-  link.href = url;
-  link.click();
-  URL.revokeObjectURL(url);
-
-  // Open Threads intent with text
-  const threadsUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`;
-  setTimeout(() => window.open(threadsUrl, '_blank'), 500);
-
-  note.textContent = 'image saved! Threads will open - paste the image there';
-}
-
-// --- Download only ---
 async function downloadCard() {
-  const blob = await getCardBlob();
+  const canvas = renderCard();
+  const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.download = `${lastCelebData.dateStr.replace(/\./g,'-')}_${lastCelebData.config.label}_otsukare.png`;
@@ -716,29 +822,29 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-// --- Confetti ---
+// --- Confetti (more particles, more colors) ---
 function launchConfetti(themeColor) {
   const canvas = document.getElementById('confetti');
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  const colors = [themeColor,'#ffc107','#ff8fab','#a8e6cf','#fddb92','#f8b4d9','#88d8ff','#b28dff'];
+  const colors = [themeColor,'#ffc107','#ff6b9d','#a8e6cf','#fddb92','#f8b4d9','#88d8ff','#b28dff','#ff8fab','#7b68ee'];
   const particles = [];
 
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < 180; i++) {
     particles.push({
-      x: canvas.width/2 + (Math.random()-0.5)*200,
-      y: canvas.height/2,
-      vx: (Math.random()-0.5)*16,
-      vy: -Math.random()*18 - 4,
+      x: canvas.width/2 + (Math.random()-0.5)*300,
+      y: canvas.height * 0.5 + (Math.random()-0.5)*100,
+      vx: (Math.random()-0.5)*20,
+      vy: -Math.random()*22 - 5,
       color: colors[Math.floor(Math.random()*colors.length)],
-      size: Math.random()*8 + 4,
+      size: Math.random()*10 + 4,
       rotation: Math.random()*360,
-      rotSpeed: (Math.random()-0.5)*10,
-      gravity: 0.3 + Math.random()*0.2,
+      rotSpeed: (Math.random()-0.5)*12,
+      gravity: 0.25 + Math.random()*0.2,
       opacity: 1,
-      shape: Math.random()>0.5 ? 'rect' : 'circle',
+      shape: ['rect','circle','star'][Math.floor(Math.random()*3)],
     });
   }
 
@@ -749,7 +855,7 @@ function launchConfetti(themeColor) {
     for (const p of particles) {
       p.x += p.vx; p.vy += p.gravity; p.y += p.vy;
       p.rotation += p.rotSpeed; p.vx *= 0.99;
-      if (frame > 60) p.opacity -= 0.015;
+      if (frame > 80) p.opacity -= 0.012;
       if (p.opacity <= 0) continue;
       alive = true;
       ctx.save();
@@ -757,33 +863,52 @@ function launchConfetti(themeColor) {
       ctx.rotate(p.rotation * Math.PI/180);
       ctx.globalAlpha = Math.max(0, p.opacity);
       ctx.fillStyle = p.color;
-      if (p.shape === 'rect') ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
-      else { ctx.beginPath(); ctx.arc(0,0,p.size/2,0,Math.PI*2); ctx.fill(); }
+      if (p.shape === 'rect') {
+        ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+      } else if (p.shape === 'circle') {
+        ctx.beginPath(); ctx.arc(0,0,p.size/2,0,Math.PI*2); ctx.fill();
+      } else {
+        // Star
+        const s = p.size/2;
+        ctx.beginPath();
+        for (let j=0; j<5; j++) {
+          const a = (j*4*Math.PI/5) - Math.PI/2;
+          const r = j===0 ? s : s;
+          ctx.lineTo(Math.cos(a)*s, Math.sin(a)*s);
+          const a2 = a + 2*Math.PI/5;
+          ctx.lineTo(Math.cos(a2)*s*0.4, Math.sin(a2)*s*0.4);
+        }
+        ctx.closePath(); ctx.fill();
+      }
       ctx.restore();
     }
     frame++;
-    if (alive && frame < 200) requestAnimationFrame(animate);
+    if (alive && frame < 250) requestAnimationFrame(animate);
     else ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   animate();
 }
 
-// --- Sound ---
+// --- Sound (more celebratory) ---
 function playSound() {
   if (!soundOn) return;
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
-    const notes = [523.25, 659.25, 783.99, 1046.5];
+    // Fanfare: C E G C E G C
+    const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5, 1046.5, 1318.5];
+    const times = [0, 0.12, 0.24, 0.4, 0.52, 0.7, 0.82];
+    const durs =  [0.3, 0.3, 0.3, 0.5, 0.5, 0.3, 0.6];
     notes.forEach((freq, i) => {
       const osc = ac.createOscillator();
       const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
-      osc.frequency.value = freq; osc.type = 'sine';
-      gain.gain.setValueAtTime(0, ac.currentTime + i*0.15);
-      gain.gain.linearRampToValueAtTime(0.15, ac.currentTime + i*0.15 + 0.05);
-      gain.gain.linearRampToValueAtTime(0, ac.currentTime + i*0.15 + 0.4);
-      osc.start(ac.currentTime + i*0.15);
-      osc.stop(ac.currentTime + i*0.15 + 0.5);
+      osc.frequency.value = freq;
+      osc.type = i < 3 ? 'triangle' : 'sine';
+      gain.gain.setValueAtTime(0, ac.currentTime + times[i]);
+      gain.gain.linearRampToValueAtTime(0.12, ac.currentTime + times[i] + 0.04);
+      gain.gain.linearRampToValueAtTime(0, ac.currentTime + times[i] + durs[i]);
+      osc.start(ac.currentTime + times[i]);
+      osc.stop(ac.currentTime + times[i] + durs[i] + 0.1);
     });
   } catch(e) {}
 }
