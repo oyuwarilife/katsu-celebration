@@ -67,10 +67,10 @@
   .stamp-weekdays { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px; }
   .stamp-weekdays span { font-size:0.65rem; color:#bbb; text-align:center; padding:2px 0; }
   .stamp-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
-  .stamp-day { aspect-ratio:1; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#ccc; position:relative; background:#fafafa; transition:background 0.2s; overflow:hidden; }
-  .stamp-day.has-stamp { color:var(--text); }
-  .stamp-day.today { outline:2px solid var(--primary); outline-offset:-1px; }
-  .stamp-day .day-num { font-weight:700; font-size:0.7rem; line-height:1; position:relative; z-index:2; }
+  .stamp-day { aspect-ratio:1; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#999; position:relative; background:#fafafa; border:1.5px solid #e0e0e0; transition:background 0.2s; overflow:hidden; }
+  .stamp-day.has-stamp { color:#333; border-color:#ccc; }
+  .stamp-day.today { outline:2.5px solid var(--primary); outline-offset:-1px; border-color:transparent; }
+  .stamp-day .day-num { font-weight:800; font-size:0.75rem; line-height:1; position:relative; z-index:2; }
   .stamp-day .hanamaru { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:1; }
   .stamp-day.empty { background:transparent; }
   .stamp-legend { display:flex; gap:0.8rem; justify-content:center; margin-top:8px; font-size:0.65rem; color:#aaa; }
@@ -512,12 +512,18 @@ function renderCard() {
 
     // Cell background
     if (dayStamps.length > 0) {
-      ctx.fillStyle = season.color + '20';
+      ctx.fillStyle = season.color + '15';
     } else {
       ctx.fillStyle = '#f8f8f8';
     }
     roundRect(ctx, x, y, cellSize, cellSize, 12);
     ctx.fill();
+
+    // Cell border
+    ctx.strokeStyle = dayStamps.length > 0 ? '#ccc' : '#e0e0e0';
+    ctx.lineWidth = 1.5;
+    roundRect(ctx, x, y, cellSize, cellSize, 12);
+    ctx.stroke();
 
     // Today highlight
     if (dateVal === `${year}-${String(month).padStart(2,'0')}-${dayKey}`) {
@@ -529,7 +535,7 @@ function renderCard() {
 
     // Day number
     ctx.font = 'bold 24px "Zen Maru Gothic","Hiragino Sans","Meiryo",sans-serif';
-    ctx.fillStyle = dayStamps.length > 0 ? '#2d2d2d' : '#ccc';
+    ctx.fillStyle = dayStamps.length > 0 ? '#222' : '#bbb';
     ctx.fillText(String(d), x + cellSize / 2, y + 35);
 
     // Hanamaru stamp
