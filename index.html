@@ -67,11 +67,11 @@
   .stamp-weekdays { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px; }
   .stamp-weekdays span { font-size:0.65rem; color:#bbb; text-align:center; padding:2px 0; }
   .stamp-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
-  .stamp-day { aspect-ratio:1; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:0.7rem; color:#ccc; position:relative; background:#fafafa; transition:background 0.2s; }
-  .stamp-day.has-stamp { background:var(--primary-light); color:var(--text); }
+  .stamp-day { aspect-ratio:1; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#ccc; position:relative; background:#fafafa; transition:background 0.2s; overflow:hidden; }
+  .stamp-day.has-stamp { color:var(--text); }
   .stamp-day.today { outline:2px solid var(--primary); outline-offset:-1px; }
-  .stamp-day .day-num { font-weight:700; font-size:0.75rem; line-height:1; }
-  .stamp-day .stamp-icons { font-size:0.55rem; line-height:1; margin-top:1px; letter-spacing:-1px; }
+  .stamp-day .day-num { font-weight:700; font-size:0.7rem; line-height:1; position:relative; z-index:2; }
+  .stamp-day .hanamaru { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:1; }
   .stamp-day.empty { background:transparent; }
   .stamp-legend { display:flex; gap:0.8rem; justify-content:center; margin-top:8px; font-size:0.65rem; color:#aaa; }
 
@@ -143,11 +143,7 @@
     </div>
     <div class="stamp-weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
     <div class="stamp-grid" id="stampGrid"></div>
-    <div class="stamp-legend">
-      <span>&#x1f305; 朝活</span>
-      <span>&#x2600;&#xfe0f; 昼活</span>
-      <span>&#x1f319; 夜活</span>
-    </div>
+    <div class="stamp-legend" id="stampLegend"></div>
   </div>
 </div>
 
@@ -201,6 +197,47 @@ const SEASON = {
   11: { name:'11月', emoji:'\u{1F341}', color:'#d84315', bg:'#fef0eb', accent:'#bf360c', label:'紅葉' },
   12: { name:'12月', emoji:'\u{1F384}', color:'#2e7d32', bg:'#f0f7f0', accent:'#1b5e20', label:'クリスマス' },
 };
+
+// --- Hanamaru (花丸) stamp ---
+function hanamaruSVG(color, size = 32) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100" style="filter:drop-shadow(0 0 1px ${color}44)">
+    <circle cx="50" cy="55" r="28" fill="none" stroke="${color}" stroke-width="5" opacity="0.8" stroke-linecap="round"/>
+    <ellipse cx="30" cy="30" rx="9" ry="6.5" fill="none" stroke="${color}" stroke-width="3.5" opacity="0.8" transform="rotate(-40,30,30)"/>
+    <ellipse cx="40" cy="20" rx="9" ry="6.5" fill="none" stroke="${color}" stroke-width="3.5" opacity="0.8" transform="rotate(-15,40,20)"/>
+    <ellipse cx="52" cy="16" rx="9" ry="6.5" fill="none" stroke="${color}" stroke-width="3.5" opacity="0.8"/>
+    <ellipse cx="64" cy="20" rx="9" ry="6.5" fill="none" stroke="${color}" stroke-width="3.5" opacity="0.8" transform="rotate(15,64,20)"/>
+    <ellipse cx="72" cy="30" rx="9" ry="6.5" fill="none" stroke="${color}" stroke-width="3.5" opacity="0.8" transform="rotate(40,72,30)"/>
+  </svg>`;
+}
+
+function drawHanamaru(ctx, cx, cy, r, color) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineCap = 'round';
+  ctx.globalAlpha = 0.8;
+  // Main circle
+  ctx.lineWidth = r * 0.16;
+  ctx.beginPath();
+  ctx.arc(cx, cy + r * 0.12, r, 0, Math.PI * 2);
+  ctx.stroke();
+  // 5 petals at top
+  const petalW = r * 0.32, petalH = r * 0.22;
+  ctx.lineWidth = r * 0.12;
+  const angles = [-0.7, -0.3, 0, 0.3, 0.7];
+  const radii = [1.15, 1.28, 1.35, 1.28, 1.15];
+  angles.forEach((a, i) => {
+    const px = cx + Math.sin(a) * r * radii[i];
+    const py = cy - Math.cos(a) * r * radii[i];
+    ctx.beginPath();
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(a * 0.7);
+    ctx.ellipse(0, 0, petalW, petalH, 0, 0, Math.PI * 2);
+    ctx.restore();
+    ctx.stroke();
+  });
+  ctx.restore();
+}
 
 // --- Stamp data: { "2026-03": { "06": ["morning","afternoon"], "07": ["evening"] } } ---
 function loadStamps() {
@@ -267,16 +304,17 @@ function renderStampCard() {
     const isToday = dateCheck === todayStr;
     const hasStamp = dayStamps.length > 0;
 
-    let icons = dayStamps.map(t => CFG[t]?.icon || '').join('');
-    const stampStyle = hasStamp ? `background:${season.color}18;` : '';
+    const stampStyle = hasStamp ? `background:${season.color}08;` : '';
     const todayStyle = isToday ? `outline-color:${season.color};` : '';
+    const rotation = hasStamp ? ((d * 7 + month * 3) % 21 - 10) : 0;
 
     html += `<div class="stamp-day${hasStamp ? ' has-stamp' : ''}${isToday ? ' today' : ''}" style="${stampStyle}${todayStyle}">
       <span class="day-num">${d}</span>
-      <span class="stamp-icons">${icons}</span>
+      ${hasStamp ? `<span class="hanamaru" style="transform:rotate(${rotation}deg)">${hanamaruSVG(season.color, 36)}</span>` : ''}
     </div>`;
   }
   grid.innerHTML = html;
+  document.getElementById('stampLegend').innerHTML = `<span>${hanamaruSVG(season.color, 16)} = 活動した日</span>`;
 }
 
 function changeMonth(delta) {
@@ -494,11 +532,14 @@ function renderCard() {
     ctx.fillStyle = dayStamps.length > 0 ? '#2d2d2d' : '#ccc';
     ctx.fillText(String(d), x + cellSize / 2, y + 35);
 
-    // Stamp icons
+    // Hanamaru stamp
     if (dayStamps.length > 0) {
-      const icons = dayStamps.map(t => CFG[t]?.icon || '').join(' ');
-      ctx.font = `${dayStamps.length > 2 ? 18 : 24}px "Segoe UI Emoji","Apple Color Emoji",sans-serif`;
-      ctx.fillText(icons, x + cellSize / 2, y + 75);
+      ctx.save();
+      const rot = ((d * 7 + month * 3) % 21 - 10) * Math.PI / 180;
+      ctx.translate(x + cellSize / 2, y + cellSize / 2 + 4);
+      ctx.rotate(rot);
+      drawHanamaru(ctx, 0, 0, cellSize * 0.35, season.color);
+      ctx.restore();
     }
   }
 
