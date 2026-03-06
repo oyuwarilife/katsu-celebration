@@ -36,7 +36,9 @@
   /* Activity buttons */
   .activity-selector { display:flex; gap:0.5rem; justify-content:center; margin-bottom:1rem; }
   .act-btn { border:none; background:#fff; color:var(--text); border-radius:16px; padding:10px 8px; font-size:0.9rem; cursor:pointer; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); display:flex; flex-direction:column; align-items:center; gap:3px; min-width:90px; box-shadow:0 3px 12px rgba(0,0,0,0.06); font-family:inherit; }
-  .act-btn .act-icon { font-size:1.6rem; transition:transform 0.3s; line-height:0; display:flex; align-items:center; justify-content:center; }
+  .act-btn .act-icon { font-size:1.6rem; transition:transform 0.3s; line-height:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+  .act-btn .act-icon svg { pointer-events:none; }
+  .act-btn .act-label { pointer-events:none; }
   .act-btn .act-label { font-size:0.8rem; font-weight:700; }
   .act-btn:hover { transform:translateY(-3px); }
   .act-btn:hover .act-icon { transform:scale(1.15); }
