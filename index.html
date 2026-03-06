@@ -700,7 +700,7 @@ function closeCelebration() {
 // --- Threads intent ---
 function shareToThreads() {
   const { config, dateStr } = lastCelebData;
-  const text = `${config.icon} ${config.label}おつかれさま!\n${dateStr}`;
+  const text = `${config.label}おつかれさま!\n${dateStr}`;
   const url = `https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`;
   window.open(url, '_blank');
 }
