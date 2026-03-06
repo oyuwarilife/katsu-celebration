@@ -114,8 +114,8 @@
     <input type="file" id="avatarInput" accept="image/*">
   </div>
 
-  <h1>おつかれさま!</h1>
-  <p class="subtitle">がんばった自分にスタンプ</p>
+  <h1>どの時間帯に参加した？</h1>
+  <p class="subtitle">選んでスタンプをもらおう！</p>
 
   <div class="activity-selector">
     <button class="act-btn" data-type="morning" onclick="selectActivity(this)">
@@ -202,27 +202,25 @@ function svgIcon(type, size = 48) {
     </g>
   </svg>`;
   if (type === 'afternoon') return `<svg width="${s}" height="${s}" viewBox="0 0 80 80" fill="none">
-    <path d="M22 58 Q22 32 40 28 Q58 32 58 58 Z" fill="#FFFBF0" stroke="#8D6E63" stroke-width="2"/>
-    <rect x="20" y="56" width="40" height="9" rx="3" fill="#5D4037"/>
-    <rect x="28" y="34" width="5" height="9" rx="1" fill="#2E7D32" transform="rotate(-8,30,38)"/>
-    <circle cx="36" cy="43" r="5" fill="#E53935"/><circle cx="45" cy="47" r="3.5" fill="#FF9800"/>
-    <circle cx="40" cy="37" r="3" fill="#43A047"/><circle cx="49" cy="40" r="2.5" fill="#FF7043"/>
-    <ellipse cx="32" cy="50" rx="4.5" ry="3" fill="#FFC107" opacity="0.8"/>
-    <path d="M34 18 Q37 11 40 18" stroke="#8D6E63" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <path d="M38 14 Q41 7 44 14" stroke="#8D6E63" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <path d="M42 18 Q45 11 48 18" stroke="#8D6E63" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M40 12 L62 58 Q62 66 40 66 Q18 66 18 58 Z" fill="#FFFDE7" stroke="#BCA76A" stroke-width="2" stroke-linejoin="round"/>
+    <rect x="24" y="50" width="32" height="16" rx="2" fill="#2E3A1F"/>
+    <circle cx="33" cy="36" r="2" fill="#3E2723"/><circle cx="47" cy="36" r="2" fill="#3E2723"/>
+    <path d="M36 42 Q40 47 44 42" stroke="#3E2723" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <circle cx="28" cy="40" r="3" fill="#FFAB91" opacity="0.5"/><circle cx="52" cy="40" r="3" fill="#FFAB91" opacity="0.5"/>
   </svg>`;
   if (type === 'evening') return `<svg width="${s}" height="${s}" viewBox="0 0 80 80" fill="none">
-    <path d="M50 16 A24 24 0 1 0 50 64 A18 18 0 1 1 50 16Z" fill="#FFC107"/>
-    <path d="M50 16 A24 24 0 1 0 50 64 A18 18 0 1 1 50 16Z" fill="#FFD54F" opacity="0.5"/>
-    <circle cx="32" cy="38" r="2.5" fill="#4E342E"/><circle cx="44" cy="36" r="2.5" fill="#4E342E"/>
-    <path d="M33 46 Q38 51 43 46" stroke="#4E342E" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-    <circle cx="27" cy="43" r="3.5" fill="#FF8A65" opacity="0.5"/><circle cx="47" cy="41" r="3.5" fill="#FF8A65" opacity="0.5"/>
+    <circle cx="40" cy="40" r="26" fill="#5C6BC0"/>
+    <circle cx="50" cy="34" r="20" fill="#3949AB"/>
+    <circle cx="30" cy="44" r="2" fill="#283593"/><circle cx="38" cy="50" r="2" fill="#283593"/>
+    <path d="M30 56 Q34 60 38 56" stroke="#283593" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <circle cx="26" cy="50" r="2.5" fill="#9FA8DA" opacity="0.4"/><circle cx="42" cy="53" r="2.5" fill="#9FA8DA" opacity="0.4"/>
     <g fill="#FFD54F">
-      <polygon points="62,18 63.5,22 68,22 64.5,25 66,29 62,26.5 58,29 59.5,25 56,22 60.5,22" />
-      <polygon points="70,42 71,44.5 74,44.5 71.5,46.5 72.5,49 70,47 67.5,49 68.5,46.5 66,44.5 69,44.5" />
-      <circle cx="58" cy="12" r="1.5"/><circle cx="66" cy="58" r="1.5"/>
+      <polygon points="60,16 61.5,20 66,20 62.5,23 64,27 60,24.5 56,27 57.5,23 54,20 58.5,20"/>
+      <polygon points="16,22 17,25 20,25 17.8,27 18.5,30 16,28 13.5,30 14.2,27 12,25 15,25"/>
+      <circle cx="22" cy="14" r="1.5"/><circle cx="66" cy="56" r="1.5"/><circle cx="12" cy="42" r="1"/>
     </g>
+    <text x="56" y="48" font-size="14" fill="#C5CAE9" font-family="sans-serif" font-weight="bold" opacity="0.6">z</text>
+    <text x="62" y="40" font-size="10" fill="#C5CAE9" font-family="sans-serif" font-weight="bold" opacity="0.4">z</text>
   </svg>`;
   return '';
 }
