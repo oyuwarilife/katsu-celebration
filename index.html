@@ -442,7 +442,7 @@ async function removeStamp(year, month, day) {
   updateAlreadyDone();
   updateStreak();
   updateSummary();
-  scheduleSendStamps();
+
 }
 
 function getMonthStamps(year, month) {
@@ -624,7 +624,7 @@ function completeActivity() {
   updateAlreadyDone();
   updateStreak();
   updateSummary();
-  scheduleSendStamps();
+
   showCelebration(dateVal);
 }
 
@@ -956,49 +956,6 @@ document.getElementById('dateInput').addEventListener('change', () => {
   document.getElementById('completeBtn').style.opacity = '0.4';
 });
 
-// --- Ranking ---
-const API_URL = 'https://script.google.com/macros/s/AKfycby1aHlKQVAKgL6o1OSwPhMS3vAZ7oYOgMvpjZp8MKl5Zk5YvFze7Y-FBOR_kb65cygSaQ/exec';
-let katsuNickname = localStorage.getItem('katsuNickname') || '';
-let katsuUniqueId = localStorage.getItem('katsuUniqueId') || '';
-let rankingSendTimer = null;
-
-if (!katsuUniqueId) {
-  katsuUniqueId = crypto.randomUUID ? crypto.randomUUID() :
-    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0;
-      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
-  localStorage.setItem('katsuUniqueId', katsuUniqueId);
-}
-
-function scheduleSendStamps() {
-  clearTimeout(rankingSendTimer);
-  rankingSendTimer = setTimeout(sendStampsToAPI, 3000);
-}
-
-async function sendStampsToAPI() {
-  var stamps = loadStamps();
-  var now = new Date();
-  var monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-  var monthData = stamps[monthKey] || {};
-  var monthCount = 0;
-  Object.values(monthData).forEach(function(d) { monthCount += d.length; });
-  var payload = {
-    nickname: katsuNickname || katsuUniqueId.slice(0,8),
-    stampCount: countTotalStamps(),
-    monthStampCount: monthCount,
-    month: monthKey,
-    uniqueId: katsuUniqueId
-  };
-  try {
-    await fetch(API_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload),
-    });
-  } catch (e) { console.warn('Sync failed:', e); }
-}
 
 // --- Init ---
 const now = new Date();
