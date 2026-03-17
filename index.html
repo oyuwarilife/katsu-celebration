@@ -18,8 +18,8 @@
 <meta name="twitter:title" content="ポモ活スタンプシート">
 <meta name="twitter:description" content="朝活・昼活・夜活の参加記録をスタンプカードで残せるWebアプリ">
 <meta name="twitter:image" content="https://oyuwarilife.github.io/katsu-celebration/ogp.png">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='50' cy='62' rx='22' ry='18' fill='%23ff6b9d'/><ellipse cx='28' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(-15,28,38)'/><ellipse cx='44' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(-5,44,28)'/><ellipse cx='60' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(5,60,28)'/><ellipse cx='74' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(15,74,38)'/></svg>">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='50' cy='62' rx='22' ry='18' fill='%23ff6b9d'/><ellipse cx='28' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(-15,28,38)'/><ellipse cx='44' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(-5,44,28)'/><ellipse cx='60' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(5,60,28)'/><ellipse cx='74' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(15,74,38)'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='50' cy='58' rx='32' ry='30' fill='%23e53935'/><ellipse cx='50' cy='56' rx='30' ry='28' fill='%23ff1744'/><ellipse cx='50' cy='26' rx='7' ry='5' fill='%2343a047'/><ellipse cx='41' cy='24' rx='6' ry='3.5' fill='%2343a047' transform='rotate(-25,41,24)'/><ellipse cx='59' cy='24' rx='6' ry='3.5' fill='%2343a047' transform='rotate(25,59,24)'/><ellipse cx='38' cy='48' rx='5' ry='9' fill='rgba(255,255,255,0.3)' transform='rotate(-15,38,48)'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='50' cy='58' rx='32' ry='30' fill='%23e53935'/><ellipse cx='50' cy='56' rx='30' ry='28' fill='%23ff1744'/><ellipse cx='50' cy='26' rx='7' ry='5' fill='%2343a047'/><ellipse cx='41' cy='24' rx='6' ry='3.5' fill='%2343a047' transform='rotate(-25,41,24)'/><ellipse cx='59' cy='24' rx='6' ry='3.5' fill='%2343a047' transform='rotate(25,59,24)'/><ellipse cx='38' cy='48' rx='5' ry='9' fill='rgba(255,255,255,0.3)' transform='rotate(-15,38,48)'/></svg>">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap');
   :root { --primary:#ff6b9d; --primary-light:#ffd4e5; --accent:#ffc107; --bg:#fff8fa; --text:#4a3347; }
@@ -339,35 +339,50 @@ const SEASON = {
   12: { name:'12月', emoji:'\u{1F384}', color:'#2e7d32', bg:'#f0f7f0', accent:'#1b5e20', label:'クリスマス' },
 };
 
-// --- Paw stamp (肉球) ---
+// --- Tomato stamp ---
 function hanamaruSVG(color, size = 32) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
-    <ellipse cx="50" cy="62" rx="22" ry="18" fill="${color}" opacity="0.75"/>
-    <ellipse cx="28" cy="38" rx="10" ry="12" fill="${color}" opacity="0.75" transform="rotate(-15,28,38)"/>
-    <ellipse cx="44" cy="28" rx="9" ry="11" fill="${color}" opacity="0.75" transform="rotate(-5,44,28)"/>
-    <ellipse cx="60" cy="28" rx="9" ry="11" fill="${color}" opacity="0.75" transform="rotate(5,60,28)"/>
-    <ellipse cx="74" cy="38" rx="10" ry="12" fill="${color}" opacity="0.75" transform="rotate(15,74,38)"/>
+    <ellipse cx="50" cy="58" rx="32" ry="30" fill="#e53935"/>
+    <ellipse cx="50" cy="56" rx="30" ry="28" fill="#ff1744"/>
+    <path d="M38 30 Q42 16 50 20 Q58 16 62 30" stroke="#2e7d32" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="50" cy="26" rx="7" ry="5" fill="#43a047"/>
+    <ellipse cx="41" cy="24" rx="6" ry="3.5" fill="#43a047" transform="rotate(-25,41,24)"/>
+    <ellipse cx="59" cy="24" rx="6" ry="3.5" fill="#43a047" transform="rotate(25,59,24)"/>
+    <ellipse cx="38" cy="48" rx="5" ry="9" fill="rgba(255,255,255,0.3)" transform="rotate(-15,38,48)"/>
   </svg>`;
 }
 
 function drawHanamaru(ctx, cx, cy, r, color) {
   ctx.save();
-  ctx.fillStyle = color;
-  ctx.globalAlpha = 0.75;
+  // Tomato body (shadow)
+  ctx.fillStyle = '#e53935';
+  ctx.globalAlpha = 1;
   ctx.beginPath();
-  ctx.ellipse(cx, cy + r * 0.2, r * 0.7, r * 0.55, 0, 0, Math.PI * 2);
+  ctx.ellipse(cx, cy + r * 0.15, r * 0.95, r * 0.9, 0, 0, Math.PI * 2);
   ctx.fill();
-  const toes = [
-    [-0.55, -0.45, 0.3, 0.37, -0.25],
-    [-0.18, -0.65, 0.27, 0.34, -0.08],
-    [ 0.18, -0.65, 0.27, 0.34,  0.08],
-    [ 0.55, -0.45, 0.3, 0.37,  0.25],
-  ];
-  toes.forEach(([tx, ty, tw, th, rot]) => {
-    ctx.beginPath();
-    ctx.ellipse(cx + tx * r, cy + ty * r, tw * r, th * r, rot, 0, Math.PI * 2);
-    ctx.fill();
-  });
+  // Tomato body (main)
+  ctx.fillStyle = '#ff1744';
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + r * 0.08, r * 0.9, r * 0.85, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Highlight
+  ctx.globalAlpha = 0.3;
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.ellipse(cx - r * 0.25, cy - r * 0.15, r * 0.18, r * 0.3, -0.3, 0, Math.PI * 2);
+  ctx.fill();
+  // Leaves
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = '#43a047';
+  ctx.beginPath();
+  ctx.ellipse(cx, cy - r * 0.6, r * 0.22, r * 0.15, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx - r * 0.22, cy - r * 0.65, r * 0.18, r * 0.1, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx + r * 0.22, cy - r * 0.65, r * 0.18, r * 0.1, 0.4, 0, Math.PI * 2);
+  ctx.fill();
   ctx.restore();
 }
 
@@ -562,7 +577,7 @@ function renderStampCard() {
     <div class="stamp-progress-bar"><div class="stamp-progress-fill" style="width:${pct}%;background:${season.color}"></div></div>
     <span class="stamp-progress-text">${stampedDays} / ${daysInMonth}日 参加（${pct}%）</span>`;
 
-  document.getElementById('stampLegend').innerHTML = `<span>${hanamaruSVG(season.color, 18)} = 活動した日　｜　タップで取り消し</span>`;
+  document.getElementById('stampLegend').innerHTML = `<span>${hanamaruSVG(season.color, 18)} = 参加した日　｜　タップで取り消し</span>`;
 }
 
 function changeMonth(delta) {
@@ -827,7 +842,7 @@ function renderCard() {
   ctx.fillText(`${stampedDays}/${daysInMonth}日 参加（${pct}%）`, cx, statY);
   ctx.font = 'bold 26px "Zen Maru Gothic","Hiragino Sans","Meiryo",sans-serif';
   ctx.fillStyle = '#666';
-  ctx.fillText(`今月の肉球: ${totalPaws}個`, cx, statY + 40);
+  ctx.fillText(`今月のトマト: ${totalPaws}個`, cx, statY + 40);
 
   const footY = H - 40;
   ctx.strokeStyle = '#eee'; ctx.lineWidth = 1;
@@ -900,16 +915,18 @@ function updateSummary() {
   monday.setDate(today.getDate() - mondayOffset);
   let weekCount = 0;
   for (let d = new Date(monday); d <= today; d.setDate(d.getDate() + 1)) {
-    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    if (stamps[key]) weekCount += stamps[key].length;
+    const mk = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const dk = String(d.getDate()).padStart(2,'0');
+    if (stamps[mk]?.[dk]) weekCount += stamps[mk][dk].length;
   }
 
   // This month
   const monthKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   let monthCount = 0;
   let monthDays = 0;
-  Object.keys(stamps).forEach(key => {
-    if (key.startsWith(monthKey)) { monthCount += stamps[key].length; monthDays++; }
+  const monthData = stamps[monthKey] || {};
+  Object.values(monthData).forEach(dayTypes => {
+    if (dayTypes.length > 0) { monthCount += dayTypes.length; monthDays++; }
   });
 
   document.getElementById('summarySection').innerHTML = `
