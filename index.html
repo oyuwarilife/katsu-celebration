@@ -165,11 +165,13 @@
   .confirm-btns button:hover { transform:translateY(-1px); }
 
   /* ===== WEEKLY/MONTHLY SUMMARY ===== */
-  .summary-section { margin-top:1.2rem; display:flex; gap:0.6rem; justify-content:center; flex-wrap:wrap; }
-  .summary-card { background:#fff; border-radius:16px; padding:0.8rem 1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:2px solid var(--primary-light); text-align:center; min-width:140px; flex:1; max-width:200px; }
+  .summary-section { margin-top:1.2rem; }
+  .summary-main { display:flex; gap:0.6rem; justify-content:center; margin-bottom:0.4rem; }
+  .summary-card { background:#fff; border-radius:16px; padding:0.8rem 1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:2px solid var(--primary-light); text-align:center; flex:1; max-width:200px; }
   .summary-label { font-size:0.7rem; color:#aaa; font-weight:700; margin-bottom:0.3rem; }
   .summary-value { font-size:1.6rem; font-weight:900; color:var(--primary); }
   .summary-unit { font-size:0.75rem; color:#888; font-weight:700; }
+  .summary-sub { text-align:center; font-size:0.7rem; color:#bbb; font-weight:700; }
 
   /* Small screen adjustments */
   @media (max-width: 380px) {
@@ -949,18 +951,17 @@ function updateSummary() {
   });
 
   document.getElementById('summarySection').innerHTML = `
-    <div class="summary-card">
-      <div class="summary-label">今週の参加</div>
-      <div class="summary-value">${weekCount}<span class="summary-unit">回</span></div>
+    <div class="summary-main">
+      <div class="summary-card">
+        <div class="summary-label">今週</div>
+        <div class="summary-value">${weekCount}<span class="summary-unit">回</span></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">今月</div>
+        <div class="summary-value">${monthCount}<span class="summary-unit">回</span></div>
+      </div>
     </div>
-    <div class="summary-card">
-      <div class="summary-label">今月の参加</div>
-      <div class="summary-value">${monthCount}<span class="summary-unit">回</span></div>
-    </div>
-    <div class="summary-card">
-      <div class="summary-label">今月の参加日数</div>
-      <div class="summary-value">${monthDays}<span class="summary-unit">日</span></div>
-    </div>
+    <div class="summary-sub">${monthDays}日参加</div>
   `;
 }
 
