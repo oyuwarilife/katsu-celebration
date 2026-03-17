@@ -32,12 +32,14 @@ function doGet(e) {
   }
   rows.sort(function(a, b) { return b.stampCount - a.stampCount; });
   rows = rows.slice(0, 30);
-  return ContentService.createTextOutput(JSON.stringify({ ranking: rows }))
-    .setMimeType(ContentService.MimeType.JSON);
+  var json = JSON.stringify({ ranking: rows });
+  return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
-  var params = JSON.parse(e.postData.contents);
+  var raw = e.postData.contents;
+  var decoded = Utilities.newBlob(Utilities.base64Decode(Utilities.base64Encode(raw))).getDataAsString('UTF-8');
+  var params = JSON.parse(decoded);
   var nickname = params.nickname;
   var stampCount = params.stampCount;
   var uniqueId = params.uniqueId;
