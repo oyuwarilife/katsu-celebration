@@ -536,7 +536,7 @@ function closeMilestone() {
 // --- Threads intent ---
 function shareToThreads() {
   const { config, dateStr } = lastCelebData;
-  const text = `${config.label}しました!\n${dateStr}`;
+  const text = `${config.label}に参加しました!\n${dateStr}`;
   window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`, '_blank');
 }
 
