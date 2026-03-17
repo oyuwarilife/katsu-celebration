@@ -48,11 +48,12 @@
   h1 { font-size:1.4rem; font-weight:900; margin-bottom:0.2rem; background:linear-gradient(135deg,#ff6b35,#ffc107,#8bc34a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
   .subtitle { font-size:0.8rem; color:#bbb; margin-bottom:0.8rem; }
 
-  /* Step guide */
-  .step-guide { font-size:0.7rem; color:#bbb; font-weight:700; margin-bottom:0.6rem; }
-  .step-guide .step { color:var(--primary); }
-  .step-guide .step.done { color:#8bc34a; }
-  .step-guide .arrow { margin:0 0.3rem; color:#ddd; }
+  /* Action hint */
+  .action-hint { font-size:0.75rem; color:#bbb; font-weight:700; margin-bottom:0.5rem; }
+
+  /* Complete button reveal */
+  #completeBtn { transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1); transform:scale(0); max-height:0; overflow:hidden; padding:0; margin:0; opacity:0; pointer-events:none; }
+  #completeBtn.visible { transform:scale(1); max-height:60px; padding:12px 32px; margin-bottom:0.5rem; opacity:1; pointer-events:auto; }
 
   /* Date toggle */
   .date-toggle { font-size:0.7rem; color:#aaa; cursor:pointer; margin-bottom:0.4rem; text-decoration:underline; font-weight:700; }
@@ -83,7 +84,7 @@
   .date-input:focus { outline:none; border-color:var(--primary); }
 
   .btn { border:none; border-radius:50px; padding:12px 32px; font-size:1rem; cursor:pointer; transition:all 0.3s; font-weight:900; letter-spacing:0.03em; font-family:inherit; }
-  .btn-primary { background:linear-gradient(135deg,#ff6b35,#ffc107,#8bc34a); background-size:200% 200%; animation:gradShift 3s ease infinite; color:#fff; box-shadow:0 4px 16px rgba(255,107,53,0.4); font-size:1rem; padding:12px 32px; margin-bottom:0.5rem; }
+  .btn-primary { background:linear-gradient(135deg,#ff6b35,#ffc107,#8bc34a); background-size:200% 200%; animation:gradShift 3s ease infinite; color:#fff; box-shadow:0 4px 16px rgba(255,107,53,0.4); font-size:1rem; }
   @keyframes gradShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
   .btn-primary:hover:not(:disabled) { transform:translateY(-2px) scale(1.03); }
   .btn-primary:disabled { cursor:not-allowed; }
@@ -198,11 +199,7 @@
 
   <div class="streak-badge" id="streakBadge"></div>
 
-  <div class="step-guide" id="stepGuide">
-    <span class="step" id="step1">① 時間帯を選ぶ</span>
-    <span class="arrow">→</span>
-    <span class="step" id="step2">② 参加した！を押す</span>
-  </div>
+  <div class="action-hint" id="actionHint">どれに参加した？</div>
 
   <div class="activity-selector" id="activitySelector">
     <button class="act-btn" data-type="morning" onclick="selectActivity(this)">
@@ -219,7 +216,7 @@
     </button>
   </div>
 
-  <button class="btn btn-primary" id="completeBtn" onclick="completeActivity()" disabled style="opacity:0.4">参加した！</button>
+  <button class="btn btn-primary" id="completeBtn" onclick="completeActivity()">参加した！</button>
   <div class="date-toggle" id="dateToggle" onclick="toggleDateRow()">過去の日付で記録する</div>
   <div class="date-row" id="dateRow">
     <input type="date" id="dateInput" class="date-input">
@@ -626,9 +623,8 @@ function selectActivity(btn) {
   document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active-morning','active-afternoon','active-evening'));
   selectedType = btn.dataset.type;
   btn.classList.add('active-' + selectedType);
-  document.getElementById('completeBtn').disabled = false;
-  document.getElementById('completeBtn').style.opacity = '1';
-  document.getElementById('step1').classList.add('done');
+  document.getElementById('completeBtn').classList.add('visible');
+  document.getElementById('actionHint').textContent = '';
 }
 
 function toggleDateRow() {
@@ -974,9 +970,8 @@ document.getElementById('dateInput').addEventListener('change', () => {
   // Reset selection
   document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active-morning','active-afternoon','active-evening'));
   selectedType = null;
-  document.getElementById('completeBtn').disabled = true;
-  document.getElementById('completeBtn').style.opacity = '0.4';
-  document.getElementById('step1').classList.remove('done');
+  document.getElementById('completeBtn').classList.remove('visible');
+  document.getElementById('actionHint').textContent = 'どれに参加した？';
 });
 
 
