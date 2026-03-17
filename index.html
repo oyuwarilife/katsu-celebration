@@ -160,6 +160,30 @@
   .summary-value { font-size:1.6rem; font-weight:900; color:var(--primary); }
   .summary-unit { font-size:0.75rem; color:#888; font-weight:700; }
 
+  /* ===== RANKING ===== */
+  .ranking-section { margin-top:1.5rem; background:#fff; border-radius:20px; padding:1.2rem; box-shadow:0 2px 12px rgba(0,0,0,0.06); border:2px solid var(--primary-light); }
+  .ranking-title { font-size:1rem; font-weight:900; color:var(--primary); text-align:center; margin-bottom:0.8rem; }
+  .ranking-list { display:flex; flex-direction:column; gap:0.4rem; }
+  .ranking-item { display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.8rem; border-radius:12px; background:#fafafa; }
+  .ranking-item.me { background:var(--primary-light); border:2px solid var(--primary); }
+  .ranking-rank { font-size:1.1rem; font-weight:900; min-width:2rem; text-align:center; }
+  .ranking-name { flex:1; font-size:0.85rem; font-weight:700; color:#4a3347; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ranking-count { font-size:1rem; font-weight:900; color:var(--primary); }
+  .ranking-count small { font-size:0.7rem; font-weight:700; color:#aaa; margin-left:2px; }
+  .ranking-empty, .ranking-error, .ranking-loading { text-align:center; color:#aaa; font-size:0.8rem; padding:1rem; }
+
+  /* ===== NICKNAME DIALOG ===== */
+  .nickname-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1200; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+  .nickname-overlay.show { opacity:1; pointer-events:auto; }
+  .nickname-box { background:#fff; border-radius:24px; padding:2rem 1.5rem; width:90%; max-width:320px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+  .nickname-msg { font-size:1.1rem; font-weight:900; color:#4a3347; margin-bottom:0.3rem; }
+  .nickname-sub { font-size:0.75rem; color:#aaa; margin-bottom:1rem; }
+  .nickname-box input { width:80%; border:2px solid #eee; border-radius:12px; padding:10px 14px; font-size:1rem; font-family:inherit; text-align:center; outline:none; transition:border 0.2s; }
+  .nickname-box input:focus { border-color:var(--primary); }
+  .nickname-box button { display:block; width:80%; margin:0.6rem auto 0; border:none; border-radius:50px; padding:10px; font-size:0.9rem; font-weight:900; cursor:pointer; font-family:inherit; }
+  #nicknameOk { background:linear-gradient(135deg,#ff6b9d,#ff8fab); color:#fff; box-shadow:0 3px 12px rgba(255,107,157,0.3); }
+  .nickname-skip { background:none; color:#aaa; font-size:0.8rem !important; }
+
   /* Small screen adjustments */
   @media (max-width: 380px) {
     .container { padding:1rem 0.5rem; }
@@ -184,7 +208,7 @@
     <input type="file" id="avatarInput" accept="image/*">
   </div>
 
-  <h1>どの時間帯に参加した？</h1>
+  <h1>ポモ活スタンプシート</h1>
 
   <div class="streak-badge" id="streakBadge"></div>
 
@@ -224,6 +248,25 @@
 
   <!-- Weekly/Monthly Summary -->
   <div class="summary-section" id="summarySection"></div>
+
+  <!-- Ranking -->
+  <div class="ranking-section" id="rankingSection">
+    <div class="ranking-title">みんなの参加状況</div>
+    <div class="ranking-list" id="rankingList">
+      <div class="ranking-loading">読み込み中...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Nickname Dialog -->
+<div class="nickname-overlay" id="nicknameOverlay">
+  <div class="nickname-box">
+    <div class="nickname-msg">ニックネームを入力してね</div>
+    <div class="nickname-sub">ランキングに表示される名前です</div>
+    <input type="text" id="nicknameInput" maxlength="12" placeholder="例: おゆわり">
+    <button id="nicknameOk">決定</button>
+    <button class="nickname-skip" id="nicknameSkip">あとで</button>
+  </div>
 </div>
 
 <!-- Celebration -->
@@ -442,6 +485,7 @@ async function removeStamp(year, month, day) {
   updateAlreadyDone();
   updateStreak();
   updateSummary();
+  scheduleSendStamps();
 }
 
 function getMonthStamps(year, month) {
@@ -623,6 +667,7 @@ function completeActivity() {
   updateAlreadyDone();
   updateStreak();
   updateSummary();
+  scheduleSendStamps();
   showCelebration(dateVal);
 }
 
@@ -954,6 +999,95 @@ document.getElementById('dateInput').addEventListener('change', () => {
   document.getElementById('completeBtn').style.opacity = '0.4';
 });
 
+// --- Ranking ---
+const API_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+let katsuNickname = localStorage.getItem('katsuNickname') || '';
+let katsuUniqueId = localStorage.getItem('katsuUniqueId') || '';
+let rankingSendTimer = null;
+
+if (!katsuUniqueId) {
+  katsuUniqueId = crypto.randomUUID ? crypto.randomUUID() :
+    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  localStorage.setItem('katsuUniqueId', katsuUniqueId);
+}
+
+function scheduleSendStamps() {
+  if (!katsuNickname || API_URL.indexOf('PASTE_YOUR') === 0) return;
+  clearTimeout(rankingSendTimer);
+  rankingSendTimer = setTimeout(sendStampsToAPI, 3000);
+}
+
+async function sendStampsToAPI() {
+  if (!katsuNickname) return;
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ nickname: katsuNickname, stampCount: countTotalStamps(), uniqueId: katsuUniqueId }),
+    });
+  } catch (e) { console.warn('Ranking sync failed:', e); }
+}
+
+async function loadRanking() {
+  if (API_URL.indexOf('PASTE_YOUR') === 0) {
+    document.getElementById('rankingSection').style.display = 'none';
+    return;
+  }
+  var list = document.getElementById('rankingList');
+  try {
+    var res = await fetch(API_URL);
+    var data = await res.json();
+    if (!data.ranking || data.ranking.length === 0) {
+      list.innerHTML = '<div class="ranking-empty">まだデータがありません</div>';
+      return;
+    }
+    list.innerHTML = data.ranking.map(function(r, i) {
+      var medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+      var isMe = katsuNickname && r.nickname === katsuNickname;
+      var name = document.createElement('span');
+      name.textContent = r.nickname;
+      var escaped = name.textContent.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+      return '<div class="ranking-item' + (isMe ? ' me' : '') + '">' +
+        '<span class="ranking-rank">' + medal + '</span>' +
+        '<span class="ranking-name">' + escaped + '</span>' +
+        '<span class="ranking-count">' + r.stampCount + '<small>個</small></span></div>';
+    }).join('');
+  } catch (e) {
+    list.innerHTML = '<div class="ranking-error">ランキングを読み込めませんでした</div>';
+  }
+}
+
+function showNicknameDialog() {
+  document.getElementById('nicknameOverlay').classList.add('show');
+  var input = document.getElementById('nicknameInput');
+  input.value = katsuNickname;
+  setTimeout(function() { input.focus(); }, 300);
+
+  function cleanup() {
+    document.getElementById('nicknameOk').removeEventListener('click', onOk);
+    document.getElementById('nicknameSkip').removeEventListener('click', onSkip);
+    input.removeEventListener('keydown', onKey);
+    document.getElementById('nicknameOverlay').classList.remove('show');
+  }
+  function onOk() {
+    var v = input.value.trim();
+    if (!v) return;
+    katsuNickname = v;
+    localStorage.setItem('katsuNickname', v);
+    cleanup();
+    sendStampsToAPI().then(loadRanking);
+  }
+  function onSkip() { cleanup(); }
+  function onKey(e) { if (e.key === 'Enter') onOk(); }
+
+  document.getElementById('nicknameOk').addEventListener('click', onOk);
+  document.getElementById('nicknameSkip').addEventListener('click', onSkip);
+  input.addEventListener('keydown', onKey);
+}
+
 // --- Init ---
 const now = new Date();
 viewYear = now.getFullYear();
@@ -971,6 +1105,8 @@ renderStampCard();
 updateAlreadyDone();
 updateStreak();
 updateSummary();
+loadRanking();
+if (!katsuNickname) { setTimeout(showNicknameDialog, 1500); }
 </script>
 </body>
 </html>
