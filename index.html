@@ -983,17 +983,19 @@ async function sendStampsToAPI() {
   var monthData = stamps[monthKey] || {};
   var monthCount = 0;
   Object.values(monthData).forEach(function(d) { monthCount += d.length; });
+  var payload = {
+    nickname: katsuNickname || katsuUniqueId.slice(0,8),
+    stampCount: countTotalStamps(),
+    monthStampCount: monthCount,
+    month: monthKey,
+    uniqueId: katsuUniqueId
+  };
   try {
     await fetch(API_URL, {
       method: 'POST',
+      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        nickname: katsuNickname || katsuUniqueId.slice(0,8),
-        stampCount: countTotalStamps(),
-        monthStampCount: monthCount,
-        month: monthKey,
-        uniqueId: katsuUniqueId
-      }),
+      body: JSON.stringify(payload),
     });
   } catch (e) { console.warn('Sync failed:', e); }
 }
