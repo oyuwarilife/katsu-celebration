@@ -9,6 +9,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ポモ活">
+<meta property="og:title" content="ポモ活スタンプシート">
+<meta property="og:description" content="朝活・昼活・夜活の参加記録をスタンプカードで残せるWebアプリ。みんなで楽しく続けよう！">
+<meta property="og:image" content="https://oyuwarilife.github.io/katsu-celebration/ogp.png">
+<meta property="og:url" content="https://oyuwarilife.github.io/katsu-celebration/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ポモ活スタンプシート">
+<meta name="twitter:description" content="朝活・昼活・夜活の参加記録をスタンプカードで残せるWebアプリ">
+<meta name="twitter:image" content="https://oyuwarilife.github.io/katsu-celebration/ogp.png">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='50' cy='62' rx='22' ry='18' fill='%23ff6b9d'/><ellipse cx='28' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(-15,28,38)'/><ellipse cx='44' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(-5,44,28)'/><ellipse cx='60' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(5,60,28)'/><ellipse cx='74' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(15,74,38)'/></svg>">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='50' cy='62' rx='22' ry='18' fill='%23ff6b9d'/><ellipse cx='28' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(-15,28,38)'/><ellipse cx='44' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(-5,44,28)'/><ellipse cx='60' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(5,60,28)'/><ellipse cx='74' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(15,74,38)'/></svg>">
 <style>
@@ -119,8 +128,6 @@
 
   .stars-burst { position:absolute; top:50%; left:50%; width:0; height:0; z-index:0; }
   #confetti { position:fixed; inset:0; z-index:101; pointer-events:none; }
-  .sound-toggle { position:fixed; top:0.8rem; right:0.8rem; background:rgba(255,255,255,0.8); border:none; font-size:1.2rem; cursor:pointer; opacity:0.5; transition:opacity 0.2s; z-index:200; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; }
-  .sound-toggle:hover { opacity:1; }
   #cardCanvas { display:none; }
 
   /* ===== MILESTONE POPUP ===== */
@@ -146,6 +153,13 @@
   .confirm-no { background:#f0f0f0; color:#999; }
   .confirm-btns button:hover { transform:translateY(-1px); }
 
+  /* ===== WEEKLY/MONTHLY SUMMARY ===== */
+  .summary-section { margin-top:1.2rem; display:flex; gap:0.6rem; justify-content:center; flex-wrap:wrap; }
+  .summary-card { background:#fff; border-radius:16px; padding:0.8rem 1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:2px solid var(--primary-light); text-align:center; min-width:140px; flex:1; max-width:200px; }
+  .summary-label { font-size:0.7rem; color:#aaa; font-weight:700; margin-bottom:0.3rem; }
+  .summary-value { font-size:1.6rem; font-weight:900; color:var(--primary); }
+  .summary-unit { font-size:0.75rem; color:#888; font-weight:700; }
+
   /* Small screen adjustments */
   @media (max-width: 380px) {
     .container { padding:1rem 0.5rem; }
@@ -162,8 +176,6 @@
 </head>
 <body>
 <div class="bg-shapes"><span></span><span></span><span></span></div>
-<button class="sound-toggle" id="soundToggle">&#x1f507;</button>
-
 <div class="container">
   <div class="avatar-area" onclick="document.getElementById('avatarInput').click()">
     <div class="avatar-circle" id="avatarCircle">
@@ -210,6 +222,9 @@
     <div class="stamp-progress" id="stampProgress"></div>
     <div class="stamp-legend" id="stampLegend"></div>
   </div>
+
+  <!-- Weekly/Monthly Summary -->
+  <div class="summary-section" id="summarySection"></div>
 </div>
 
 <!-- Celebration -->
@@ -259,7 +274,6 @@
 let selectedType = null;
 let avatarDataUrl = null;
 let avatarImg = null;
-let soundOn = false;
 let lastCelebData = {};
 let viewYear, viewMonth; // stamp card view
 
@@ -413,6 +427,7 @@ async function removeStamp(year, month, day) {
   renderStampCard();
   updateAlreadyDone();
   updateStreak();
+  updateSummary();
 }
 
 function getMonthStamps(year, month) {
@@ -593,7 +608,7 @@ function completeActivity() {
   renderStampCard();
   updateAlreadyDone();
   updateStreak();
-  playSound();
+  updateSummary();
   showCelebration(dateVal);
 }
 
@@ -872,29 +887,46 @@ function launchConfetti(themeColor) {
   animate();
 }
 
-// --- Sound ---
-function playSound() {
-  if (!soundOn) return;
-  try {
-    const ac = new (window.AudioContext||window.webkitAudioContext)();
-    const notes=[523.25,659.25,783.99,1046.5,1318.5,1046.5,1318.5];
-    const times=[0,0.12,0.24,0.4,0.52,0.7,0.82];
-    const durs=[0.3,0.3,0.3,0.5,0.5,0.3,0.6];
-    notes.forEach((freq,i) => {
-      const osc=ac.createOscillator(), gain=ac.createGain();
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.frequency.value=freq; osc.type=i<3?'triangle':'sine';
-      gain.gain.setValueAtTime(0,ac.currentTime+times[i]);
-      gain.gain.linearRampToValueAtTime(0.12,ac.currentTime+times[i]+0.04);
-      gain.gain.linearRampToValueAtTime(0,ac.currentTime+times[i]+durs[i]);
-      osc.start(ac.currentTime+times[i]); osc.stop(ac.currentTime+times[i]+durs[i]+0.1);
-    });
-  } catch(e){}
+// --- Weekly/Monthly Summary ---
+function updateSummary() {
+  const stamps = loadStamps();
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  // This week (Monday start)
+  const dayOfWeek = today.getDay();
+  const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - mondayOffset);
+  let weekCount = 0;
+  for (let d = new Date(monday); d <= today; d.setDate(d.getDate() + 1)) {
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if (stamps[key]) weekCount += stamps[key].length;
+  }
+
+  // This month
+  const monthKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  let monthCount = 0;
+  let monthDays = 0;
+  Object.keys(stamps).forEach(key => {
+    if (key.startsWith(monthKey)) { monthCount += stamps[key].length; monthDays++; }
+  });
+
+  document.getElementById('summarySection').innerHTML = `
+    <div class="summary-card">
+      <div class="summary-label">今週の参加</div>
+      <div class="summary-value">${weekCount}<span class="summary-unit">回</span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">今月の参加</div>
+      <div class="summary-value">${monthCount}<span class="summary-unit">回</span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">今月の参加日数</div>
+      <div class="summary-value">${monthDays}<span class="summary-unit">日</span></div>
+    </div>
+  `;
 }
-document.getElementById('soundToggle').addEventListener('click', () => {
-  soundOn=!soundOn;
-  document.getElementById('soundToggle').textContent=soundOn?'\u{1F50A}':'\u{1F507}';
-});
 
 // --- Date change handler ---
 document.getElementById('dateInput').addEventListener('change', () => {
@@ -922,6 +954,7 @@ document.getElementById('iconEvening').innerHTML = svgIcon('evening');
 renderStampCard();
 updateAlreadyDone();
 updateStreak();
+updateSummary();
 </script>
 </body>
 </html>
