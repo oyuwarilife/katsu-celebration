@@ -36,17 +36,29 @@
   .container { text-align:center; padding:1.5rem 0.8rem; max-width:420px; width:100%; position:relative; z-index:1; }
 
   /* Avatar */
-  .avatar-area { width:90px; height:90px; margin:0 auto 0.6rem; cursor:pointer; position:relative; }
+  .avatar-area { width:56px; height:56px; margin:0 auto 0.4rem; cursor:pointer; position:relative; }
   .avatar-area input { display:none; }
-  .avatar-circle { width:90px; height:90px; border-radius:50%; border:3px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(135deg,#ff6b35,#ffc107,#8bc34a) border-box; display:flex; align-items:center; justify-content:center; overflow:hidden; transition:transform 0.3s; box-shadow:0 4px 16px rgba(255,107,53,0.2); }
+  .avatar-circle { width:56px; height:56px; border-radius:50%; border:2px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(135deg,#ff6b35,#ffc107,#8bc34a) border-box; display:flex; align-items:center; justify-content:center; overflow:hidden; transition:transform 0.3s; box-shadow:0 2px 8px rgba(255,107,53,0.15); }
   .avatar-circle:hover { transform:scale(1.08); }
   .avatar-circle img { width:100%; height:100%; object-fit:cover; }
-  .avatar-placeholder { display:flex; flex-direction:column; align-items:center; gap:2px; }
-  .avatar-ph-icon { font-size:1.2rem; }
-  .avatar-ph-text { font-size:0.5rem; color:#bbb; line-height:1.3; font-weight:700; }
+  .avatar-placeholder { display:flex; flex-direction:column; align-items:center; gap:1px; }
+  .avatar-ph-icon { font-size:0.9rem; }
+  .avatar-ph-text { font-size:0.4rem; color:#bbb; line-height:1.2; font-weight:700; }
 
   h1 { font-size:1.4rem; font-weight:900; margin-bottom:0.2rem; background:linear-gradient(135deg,#ff6b35,#ffc107,#8bc34a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
   .subtitle { font-size:0.8rem; color:#bbb; margin-bottom:0.8rem; }
+
+  /* Step guide */
+  .step-guide { font-size:0.7rem; color:#bbb; font-weight:700; margin-bottom:0.6rem; }
+  .step-guide .step { color:var(--primary); }
+  .step-guide .step.done { color:#8bc34a; }
+  .step-guide .arrow { margin:0 0.3rem; color:#ddd; }
+
+  /* Date toggle */
+  .date-toggle { font-size:0.7rem; color:#aaa; cursor:pointer; margin-bottom:0.4rem; text-decoration:underline; font-weight:700; }
+  .date-toggle:hover { color:var(--primary); }
+  .date-row { display:none; margin-bottom:0.6rem; }
+  .date-row.show { display:flex; gap:0.5rem; justify-content:center; align-items:center; }
 
   /* Streak badge */
   .streak-badge { display:none; margin:0 auto 0.8rem; padding:6px 16px; border-radius:20px; font-size:0.8rem; font-weight:900; color:#fff; animation:slideUp 0.5s both; }
@@ -66,14 +78,12 @@
   .act-btn.already-done { opacity:0.45; pointer-events:none; position:relative; }
   .act-btn.already-done::after { content:'済'; position:absolute; top:4px; right:6px; font-size:0.55rem; background:var(--primary); color:#fff; border-radius:50%; width:18px; height:18px; display:flex; align-items:center; justify-content:center; font-weight:900; }
 
-  /* Date + button row */
-  .action-row { display:flex; gap:0.5rem; justify-content:center; align-items:center; margin-bottom:1rem; }
+  /* Date + button */
   .date-input { font-family:inherit; font-size:0.85rem; font-weight:700; color:var(--text); background:#fff; border:2px solid var(--primary-light); border-radius:12px; padding:8px 10px; text-align:center; cursor:pointer; transition:all 0.3s; box-shadow:0 2px 8px rgba(0,0,0,0.04); width:155px; }
   .date-input:focus { outline:none; border-color:var(--primary); }
-  .today-hint { font-size:0.65rem; color:#bbb; margin-top:-0.5rem; margin-bottom:0.6rem; }
 
   .btn { border:none; border-radius:50px; padding:12px 32px; font-size:1rem; cursor:pointer; transition:all 0.3s; font-weight:900; letter-spacing:0.03em; font-family:inherit; }
-  .btn-primary { background:linear-gradient(135deg,#ff6b35,#ffc107,#8bc34a); background-size:200% 200%; animation:gradShift 3s ease infinite; color:#fff; box-shadow:0 4px 16px rgba(255,107,53,0.4); font-size:1rem; padding:12px 32px; }
+  .btn-primary { background:linear-gradient(135deg,#ff6b35,#ffc107,#8bc34a); background-size:200% 200%; animation:gradShift 3s ease infinite; color:#fff; box-shadow:0 4px 16px rgba(255,107,53,0.4); font-size:1rem; padding:12px 32px; margin-bottom:0.5rem; }
   @keyframes gradShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
   .btn-primary:hover:not(:disabled) { transform:translateY(-2px) scale(1.03); }
   .btn-primary:disabled { cursor:not-allowed; }
@@ -188,6 +198,12 @@
 
   <div class="streak-badge" id="streakBadge"></div>
 
+  <div class="step-guide" id="stepGuide">
+    <span class="step" id="step1">① 時間帯を選ぶ</span>
+    <span class="arrow">→</span>
+    <span class="step" id="step2">② 参加した！を押す</span>
+  </div>
+
   <div class="activity-selector" id="activitySelector">
     <button class="act-btn" data-type="morning" onclick="selectActivity(this)">
       <span class="act-icon" id="iconMorning"></span>
@@ -203,11 +219,11 @@
     </button>
   </div>
 
-  <div class="action-row">
+  <button class="btn btn-primary" id="completeBtn" onclick="completeActivity()" disabled style="opacity:0.4">参加した！</button>
+  <div class="date-toggle" id="dateToggle" onclick="toggleDateRow()">過去の日付で記録する</div>
+  <div class="date-row" id="dateRow">
     <input type="date" id="dateInput" class="date-input">
-    <button class="btn btn-primary" id="completeBtn" onclick="completeActivity()" disabled style="opacity:0.4">参加した！</button>
   </div>
-  <p class="today-hint" id="todayHint"></p>
 
   <!-- Stamp Card -->
   <div class="stamp-card">
@@ -612,6 +628,12 @@ function selectActivity(btn) {
   btn.classList.add('active-' + selectedType);
   document.getElementById('completeBtn').disabled = false;
   document.getElementById('completeBtn').style.opacity = '1';
+  document.getElementById('step1').classList.add('done');
+}
+
+function toggleDateRow() {
+  var row = document.getElementById('dateRow');
+  row.classList.toggle('show');
 }
 
 // --- Complete ---
@@ -954,6 +976,7 @@ document.getElementById('dateInput').addEventListener('change', () => {
   selectedType = null;
   document.getElementById('completeBtn').disabled = true;
   document.getElementById('completeBtn').style.opacity = '0.4';
+  document.getElementById('step1').classList.remove('done');
 });
 
 
@@ -964,7 +987,6 @@ viewMonth = now.getMonth() + 1;
 const todayISO = `${viewYear}-${String(viewMonth).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 document.getElementById('dateInput').value = todayISO;
 document.getElementById('dateInput').max = todayISO;
-document.getElementById('todayHint').textContent = '\u203B \u65E5\u4ED8\u3092\u5909\u3048\u308C\u3070\u904E\u53BB\u306E\u8A18\u9332\u3082\u3067\u304D\u307E\u3059';
 
 document.getElementById('iconMorning').innerHTML = svgIcon('morning');
 document.getElementById('iconAfternoon').innerHTML = svgIcon('afternoon');
