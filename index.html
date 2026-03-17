@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ポモ活スタンプシート</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff6b9d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ポモ活">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='50' cy='62' rx='22' ry='18' fill='%23ff6b9d'/><ellipse cx='28' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(-15,28,38)'/><ellipse cx='44' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(-5,44,28)'/><ellipse cx='60' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(5,60,28)'/><ellipse cx='74' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(15,74,38)'/></svg>">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='50' cy='62' rx='22' ry='18' fill='%23ff6b9d'/><ellipse cx='28' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(-15,28,38)'/><ellipse cx='44' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(-5,44,28)'/><ellipse cx='60' cy='28' rx='9' ry='11' fill='%23ff6b9d' transform='rotate(5,60,28)'/><ellipse cx='74' cy='38' rx='10' ry='12' fill='%23ff6b9d' transform='rotate(15,74,38)'/></svg>">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap');
@@ -18,42 +24,47 @@
   .bg-shapes span:nth-child(3) { width:100px; height:100px; background:#7b68ee; bottom:15%; left:20%; animation-delay:4s; }
   @keyframes float { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-30px) scale(1.1)} }
 
-  .container { text-align:center; padding:1.5rem 1rem; max-width:420px; width:100%; position:relative; z-index:1; }
+  .container { text-align:center; padding:1.5rem 0.8rem; max-width:420px; width:100%; position:relative; z-index:1; }
 
   /* Avatar */
-  .avatar-area { width:100px; height:100px; margin:0 auto 0.8rem; cursor:pointer; position:relative; }
+  .avatar-area { width:90px; height:90px; margin:0 auto 0.6rem; cursor:pointer; position:relative; }
   .avatar-area input { display:none; }
-  .avatar-circle { width:100px; height:100px; border-radius:50%; border:3px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(135deg,#ff6b9d,#ffc107,#7b68ee) border-box; display:flex; align-items:center; justify-content:center; overflow:hidden; transition:transform 0.3s; box-shadow:0 4px 16px rgba(255,107,157,0.2); }
+  .avatar-circle { width:90px; height:90px; border-radius:50%; border:3px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(135deg,#ff6b9d,#ffc107,#7b68ee) border-box; display:flex; align-items:center; justify-content:center; overflow:hidden; transition:transform 0.3s; box-shadow:0 4px 16px rgba(255,107,157,0.2); }
   .avatar-circle:hover { transform:scale(1.08); }
   .avatar-circle img { width:100%; height:100%; object-fit:cover; }
   .avatar-placeholder { display:flex; flex-direction:column; align-items:center; gap:2px; }
   .avatar-ph-icon { font-size:1.2rem; }
   .avatar-ph-text { font-size:0.5rem; color:#bbb; line-height:1.3; font-weight:700; }
 
-  h1 { font-size:1.5rem; font-weight:900; margin-bottom:0.2rem; background:linear-gradient(135deg,#ff6b9d,#ff8fab,#ffc107); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .subtitle { font-size:0.8rem; color:#bbb; margin-bottom:1rem; }
+  h1 { font-size:1.4rem; font-weight:900; margin-bottom:0.2rem; background:linear-gradient(135deg,#ff6b9d,#ff8fab,#ffc107); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .subtitle { font-size:0.8rem; color:#bbb; margin-bottom:0.8rem; }
+
+  /* Streak badge */
+  .streak-badge { display:none; margin:0 auto 0.8rem; padding:6px 16px; border-radius:20px; font-size:0.8rem; font-weight:900; color:#fff; animation:slideUp 0.5s both; }
+  .streak-badge.show { display:inline-block; }
 
   /* Activity buttons */
-  .activity-selector { display:flex; gap:0.5rem; justify-content:center; margin-bottom:1rem; }
-  .act-btn { border:none; background:#fff; color:var(--text); border-radius:16px; padding:10px 8px; font-size:0.9rem; cursor:pointer; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); display:flex; flex-direction:column; align-items:center; gap:3px; min-width:90px; box-shadow:0 3px 12px rgba(0,0,0,0.06); font-family:inherit; }
+  .activity-selector { display:flex; gap:0.4rem; justify-content:center; margin-bottom:0.8rem; }
+  .act-btn { border:none; background:#fff; color:var(--text); border-radius:16px; padding:8px 6px; font-size:0.9rem; cursor:pointer; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); display:flex; flex-direction:column; align-items:center; gap:3px; min-width:85px; box-shadow:0 3px 12px rgba(0,0,0,0.06); font-family:inherit; }
   .act-btn .act-icon { font-size:1.6rem; transition:transform 0.3s; line-height:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
   .act-btn .act-icon svg { pointer-events:none; }
-  .act-btn .act-label { pointer-events:none; }
-  .act-btn .act-label { font-size:0.8rem; font-weight:700; }
+  .act-btn .act-label { pointer-events:none; font-size:0.75rem; font-weight:700; }
   .act-btn:hover { transform:translateY(-3px); }
   .act-btn:hover .act-icon { transform:scale(1.15); }
   .act-btn.active-morning { background:linear-gradient(135deg,#FF9A76,#FFECD2); color:#8B4513; box-shadow:0 4px 16px rgba(255,154,118,0.4); transform:translateY(-3px) scale(1.05); }
   .act-btn.active-afternoon { background:linear-gradient(135deg,#4ECDC4,#a8e6cf); color:#1a5c56; box-shadow:0 4px 16px rgba(78,205,196,0.4); transform:translateY(-3px) scale(1.05); }
   .act-btn.active-evening { background:linear-gradient(135deg,#7B68EE,#c4b5fd); color:#fff; box-shadow:0 4px 16px rgba(123,104,238,0.4); transform:translateY(-3px) scale(1.05); }
+  .act-btn.already-done { opacity:0.45; pointer-events:none; position:relative; }
+  .act-btn.already-done::after { content:'済'; position:absolute; top:4px; right:6px; font-size:0.55rem; background:var(--primary); color:#fff; border-radius:50%; width:18px; height:18px; display:flex; align-items:center; justify-content:center; font-weight:900; }
 
   /* Date + button row */
-  .action-row { display:flex; gap:0.6rem; justify-content:center; align-items:center; margin-bottom:1.2rem; }
-  .date-input { font-family:inherit; font-size:0.9rem; font-weight:700; color:var(--text); background:#fff; border:2px solid var(--primary-light); border-radius:12px; padding:10px 14px; text-align:center; cursor:pointer; transition:all 0.3s; box-shadow:0 2px 8px rgba(0,0,0,0.04); width:170px; }
+  .action-row { display:flex; gap:0.5rem; justify-content:center; align-items:center; margin-bottom:1rem; }
+  .date-input { font-family:inherit; font-size:0.85rem; font-weight:700; color:var(--text); background:#fff; border:2px solid var(--primary-light); border-radius:12px; padding:8px 10px; text-align:center; cursor:pointer; transition:all 0.3s; box-shadow:0 2px 8px rgba(0,0,0,0.04); width:155px; }
   .date-input:focus { outline:none; border-color:var(--primary); }
-  .today-hint { font-size:0.65rem; color:#bbb; margin-top:-0.6rem; margin-bottom:0.8rem; }
+  .today-hint { font-size:0.65rem; color:#bbb; margin-top:-0.5rem; margin-bottom:0.6rem; }
 
   .btn { border:none; border-radius:50px; padding:12px 32px; font-size:1rem; cursor:pointer; transition:all 0.3s; font-weight:900; letter-spacing:0.03em; font-family:inherit; }
-  .btn-primary { background:linear-gradient(135deg,#ff6b9d,#ff8fab,#ffc107); background-size:200% 200%; animation:gradShift 3s ease infinite; color:#fff; box-shadow:0 4px 16px rgba(255,107,157,0.4); font-size:1.1rem; padding:14px 40px; }
+  .btn-primary { background:linear-gradient(135deg,#ff6b9d,#ff8fab,#ffc107); background-size:200% 200%; animation:gradShift 3s ease infinite; color:#fff; box-shadow:0 4px 16px rgba(255,107,157,0.4); font-size:1rem; padding:12px 32px; }
   @keyframes gradShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
   .btn-primary:hover:not(:disabled) { transform:translateY(-2px) scale(1.03); }
   .btn-primary:disabled { cursor:not-allowed; }
@@ -64,26 +75,26 @@
   .btn-back { background:none; color:#ccc; padding:8px 24px; font-size:0.8rem; text-decoration:underline; }
 
   /* ===== STAMP CARD ===== */
-  .stamp-card { background:#fff; border-radius:20px; padding:16px; margin-top:1rem; box-shadow:0 4px 20px rgba(0,0,0,0.08); border:2px solid #e8e0e4; }
-  .stamp-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .stamp-card { background:#fff; border-radius:20px; padding:14px; margin-top:0.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.08); border:2px solid #e8e0e4; }
+  .stamp-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
   .stamp-month { font-size:1rem; font-weight:900; color:var(--text); }
   .stamp-nav { display:flex; gap:0.3rem; }
   .stamp-nav button { border:none; background:var(--primary-light); color:var(--primary); border-radius:50%; width:28px; height:28px; font-size:0.9rem; cursor:pointer; font-family:inherit; font-weight:700; transition:background 0.2s; }
   .stamp-nav button:hover { background:var(--primary); color:#fff; }
   .stamp-weekdays { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px; }
   .stamp-weekdays span { font-size:0.65rem; color:#bbb; text-align:center; padding:2px 0; }
-  .stamp-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
-  .stamp-day { aspect-ratio:1; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#999; position:relative; background:#f5f0f2; border:1.5px solid #d5cdd0; transition:background 0.2s; overflow:hidden; }
+  .stamp-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+  .stamp-day { aspect-ratio:1; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#999; position:relative; background:#f5f0f2; border:1.5px solid #d5cdd0; transition:background 0.2s; overflow:hidden; }
   .stamp-day.has-stamp { color:#333; border-color:#ccc; }
   .stamp-day.today { outline:2.5px solid var(--primary); outline-offset:-1px; border-color:transparent; }
-  .stamp-day .day-num { font-weight:800; font-size:0.75rem; line-height:1; position:relative; z-index:2; }
+  .stamp-day .day-num { font-weight:800; font-size:0.7rem; line-height:1; position:relative; z-index:2; }
   .stamp-day .hanamaru { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:1; }
   .stamp-day .hanamaru.stamps-2 { gap:0; }
   .stamp-day .hanamaru.stamps-3 { flex-wrap:wrap; gap:0; align-content:center; }
   .stamp-day .hanamaru .hana-item { display:flex; line-height:0; }
   .stamp-day.empty { background:transparent; border-color:transparent; }
   .stamp-day.has-stamp { cursor:pointer; }
-  .stamp-progress { margin-top:10px; text-align:center; }
+  .stamp-progress { margin-top:8px; text-align:center; }
   .stamp-progress-bar { height:8px; border-radius:4px; background:#eee; overflow:hidden; margin:4px 0; }
   .stamp-progress-fill { height:100%; border-radius:4px; transition:width 0.4s ease; }
   .stamp-progress-text { font-size:0.7rem; font-weight:700; color:#888; }
@@ -123,6 +134,30 @@
   .milestone-btn { display:inline-block; border:none; border-radius:50px; padding:14px 36px; font-size:1rem; font-weight:900; cursor:pointer; font-family:inherit; text-decoration:none; color:#fff; background:linear-gradient(135deg,#ff6b9d,#ffc107); box-shadow:0 4px 16px rgba(255,107,157,0.4); transition:transform 0.2s; }
   .milestone-btn:hover { transform:translateY(-2px) scale(1.03); }
   .milestone-close { border:none; background:none; color:#ccc; font-size:0.8rem; cursor:pointer; margin-top:0.8rem; text-decoration:underline; font-family:inherit; display:block; margin-left:auto; margin-right:auto; }
+
+  /* ===== CUSTOM CONFIRM DIALOG ===== */
+  .confirm-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); display:none; align-items:center; justify-content:center; z-index:400; padding:1.5rem; backdrop-filter:blur(3px); }
+  .confirm-overlay.show { display:flex; }
+  .confirm-box { background:#fff; border-radius:20px; padding:1.5rem; max-width:320px; width:100%; text-align:center; animation:milestoneIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; box-shadow:0 16px 48px rgba(0,0,0,0.15); }
+  .confirm-msg { font-size:0.95rem; font-weight:700; color:var(--text); margin-bottom:1rem; line-height:1.5; }
+  .confirm-btns { display:flex; gap:0.6rem; justify-content:center; }
+  .confirm-btns button { border:none; border-radius:50px; padding:10px 24px; font-size:0.85rem; font-weight:900; cursor:pointer; font-family:inherit; transition:transform 0.2s; }
+  .confirm-yes { background:linear-gradient(135deg,#ff6b9d,#ff8fab); color:#fff; box-shadow:0 3px 12px rgba(255,107,157,0.3); }
+  .confirm-no { background:#f0f0f0; color:#999; }
+  .confirm-btns button:hover { transform:translateY(-1px); }
+
+  /* Small screen adjustments */
+  @media (max-width: 380px) {
+    .container { padding:1rem 0.5rem; }
+    .act-btn { min-width:75px; padding:8px 4px; }
+    .act-btn .act-icon svg { width:40px; height:40px; }
+    .stamp-grid { gap:1px; }
+    .stamp-day { border-radius:6px; }
+    .stamp-day .day-num { font-size:0.6rem; }
+    h1 { font-size:1.2rem; }
+    .btn-primary { font-size:0.9rem; padding:10px 24px; }
+    .date-input { width:140px; font-size:0.8rem; padding:8px; }
+  }
 </style>
 </head>
 <body>
@@ -132,7 +167,7 @@
 <div class="container">
   <div class="avatar-area" onclick="document.getElementById('avatarInput').click()">
     <div class="avatar-circle" id="avatarCircle">
-      <div class="avatar-placeholder"><span class="avatar-ph-icon">📷</span><span class="avatar-ph-text">アイコン画像を<br>アップロード</span></div>
+      <div class="avatar-placeholder"><span class="avatar-ph-icon">&#x1f4f7;</span><span class="avatar-ph-text">アイコン画像を<br>アップロード</span></div>
     </div>
     <input type="file" id="avatarInput" accept="image/*">
   </div>
@@ -140,7 +175,9 @@
   <h1>どの時間帯に参加した？</h1>
   <p class="subtitle">選んでスタンプをもらおう！</p>
 
-  <div class="activity-selector">
+  <div class="streak-badge" id="streakBadge"></div>
+
+  <div class="activity-selector" id="activitySelector">
     <button class="act-btn" data-type="morning" onclick="selectActivity(this)">
       <span class="act-icon" id="iconMorning"></span>
       <span class="act-label">朝活</span>
@@ -199,11 +236,22 @@
 <!-- Milestone Popup -->
 <div class="milestone-overlay" id="milestoneOverlay" onclick="if(event.target===this)closeMilestone()">
   <div class="milestone-box">
-    <div class="milestone-emoji">🎉🏅🎉</div>
+    <div class="milestone-emoji">&#x1f389;&#x1f3c5;&#x1f389;</div>
     <div class="milestone-title">スタンプ10個達成！</div>
-    <div class="milestone-desc">おめでとうございます！<br>よければフォームの提出を<br>お願いします✨</div>
+    <div class="milestone-desc">おめでとうございます！<br>よければフォームの提出を<br>お願いします&#x2728;</div>
     <a class="milestone-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSdSAyp-l9R15lTgn_eTgVkq04YFZY01qhuWXu-j_wDz444Fjg/viewform?usp=publish-editor" target="_blank" rel="noopener">フォームを開く</a>
     <button class="milestone-close" onclick="closeMilestone()">あとで</button>
+  </div>
+</div>
+
+<!-- Custom Confirm Dialog -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="confirm-btns">
+      <button class="confirm-yes" id="confirmYes">取り消す</button>
+      <button class="confirm-no" id="confirmNo">やめる</button>
+    </div>
   </div>
 </div>
 
@@ -261,8 +309,6 @@ function svgIcon(type, size = 48) {
   return '';
 }
 
-// Set button icons (deferred to Init)
-
 // --- Season theme per month ---
 const SEASON = {
   1:  { name:'1月', emoji:'\u{1F38D}', color:'#e74c3c', bg:'#fef0f0', accent:'#c0392b', label:'お正月' },
@@ -294,11 +340,9 @@ function drawHanamaru(ctx, cx, cy, r, color) {
   ctx.save();
   ctx.fillStyle = color;
   ctx.globalAlpha = 0.75;
-  // Main pad
   ctx.beginPath();
   ctx.ellipse(cx, cy + r * 0.2, r * 0.7, r * 0.55, 0, 0, Math.PI * 2);
   ctx.fill();
-  // 4 toe beans
   const toes = [
     [-0.55, -0.45, 0.3, 0.37, -0.25],
     [-0.18, -0.65, 0.27, 0.34, -0.08],
@@ -313,7 +357,7 @@ function drawHanamaru(ctx, cx, cy, r, color) {
   ctx.restore();
 }
 
-// --- Stamp data: { "2026-03": { "06": ["morning","afternoon"], "07": ["evening"] } } ---
+// --- Stamp data ---
 function loadStamps() {
   const raw = localStorage.getItem('katsuStamps');
   return raw ? JSON.parse(raw) : {};
@@ -330,16 +374,45 @@ function addStamp(dateStr, type) {
   saveStamps(stamps);
 }
 
-function removeStamp(year, month, day) {
+function isAlreadyStamped(dateStr, type) {
+  const stamps = loadStamps();
+  const [y, m, d] = dateStr.split('-');
+  const key = `${y}-${m}`;
+  return stamps[key]?.[d]?.includes(type) || false;
+}
+
+// --- Custom confirm dialog ---
+function showConfirm(msg) {
+  return new Promise((resolve) => {
+    document.getElementById('confirmMsg').textContent = msg;
+    document.getElementById('confirmOverlay').classList.add('show');
+    const yes = document.getElementById('confirmYes');
+    const no = document.getElementById('confirmNo');
+    function cleanup() {
+      document.getElementById('confirmOverlay').classList.remove('show');
+      yes.removeEventListener('click', onYes);
+      no.removeEventListener('click', onNo);
+    }
+    function onYes() { cleanup(); resolve(true); }
+    function onNo() { cleanup(); resolve(false); }
+    yes.addEventListener('click', onYes);
+    no.addEventListener('click', onNo);
+  });
+}
+
+async function removeStamp(year, month, day) {
   const stamps = loadStamps();
   const key = `${year}-${String(month).padStart(2,'0')}`;
   const dayKey = String(day).padStart(2,'0');
   if (!stamps[key] || !stamps[key][dayKey] || stamps[key][dayKey].length === 0) return;
   const labels = stamps[key][dayKey].map(t => CFG[t]?.label || t).join('・');
-  if (!confirm(`${month}/${day} の記録（${labels}）を取り消しますか？`)) return;
+  const ok = await showConfirm(`${month}/${day} の記録（${labels}）を取り消しますか？`);
+  if (!ok) return;
   delete stamps[key][dayKey];
   saveStamps(stamps);
   renderStampCard();
+  updateAlreadyDone();
+  updateStreak();
 }
 
 function getMonthStamps(year, month) {
@@ -357,6 +430,65 @@ function countTotalStamps() {
   return total;
 }
 
+// --- Streak calculation ---
+function calcStreak() {
+  const stamps = loadStamps();
+  const allDates = [];
+  for (const [monthKey, days] of Object.entries(stamps)) {
+    for (const [dayKey, types] of Object.entries(days)) {
+      if (types.length > 0) allDates.push(`${monthKey}-${dayKey}`);
+    }
+  }
+  if (allDates.length === 0) return 0;
+  allDates.sort().reverse();
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  let streak = 0;
+  let checkDate = new Date(today);
+  // Check if today or yesterday has a stamp to start
+  const todayStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+  if (!allDates.includes(todayStr)) {
+    checkDate.setDate(checkDate.getDate() - 1);
+    const yStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+    if (!allDates.includes(yStr)) return 0;
+  }
+  while (true) {
+    const ds = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+    if (allDates.includes(ds)) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+function updateStreak() {
+  const streak = calcStreak();
+  const badge = document.getElementById('streakBadge');
+  if (streak >= 2) {
+    badge.textContent = `\u{1F525} ${streak}日連続参加中！`;
+    badge.style.background = streak >= 7 ? 'linear-gradient(135deg,#ff6b9d,#ffc107)' : 'linear-gradient(135deg,#ff8fab,#ffb4c8)';
+    badge.classList.add('show');
+  } else {
+    badge.classList.remove('show');
+  }
+}
+
+// --- Update already-done state on activity buttons ---
+function updateAlreadyDone() {
+  const dateVal = document.getElementById('dateInput').value;
+  document.querySelectorAll('.act-btn').forEach(btn => {
+    const type = btn.dataset.type;
+    if (isAlreadyStamped(dateVal, type)) {
+      btn.classList.add('already-done');
+    } else {
+      btn.classList.remove('already-done');
+    }
+  });
+}
+
 // --- Stamp card rendering ---
 function renderStampCard() {
   const grid = document.getElementById('stampGrid');
@@ -372,7 +504,6 @@ function renderStampCard() {
   card.style.background = season.bg;
   card.style.borderTop = `3px solid ${season.color}`;
 
-  // Update CSS custom properties for stamp colors
   document.documentElement.style.setProperty('--stamp-color', season.color);
   document.documentElement.style.setProperty('--stamp-bg', season.bg);
 
@@ -380,7 +511,6 @@ function renderStampCard() {
   const daysInMonth = new Date(year, month, 0).getDate();
 
   let html = '';
-  // Empty cells for alignment
   for (let i = 0; i < firstDay; i++) html += '<div class="stamp-day empty"></div>';
 
   for (let d = 1; d <= daysInMonth; d++) {
@@ -411,7 +541,6 @@ function renderStampCard() {
   }
   grid.innerHTML = html;
 
-  // Progress bar
   const stampedDays = Object.keys(stamps).filter(k => stamps[k].length > 0).length;
   const pct = Math.round((stampedDays / daysInMonth) * 100);
   document.getElementById('stampProgress').innerHTML = `
@@ -447,6 +576,7 @@ if (savedAvatar) { avatarDataUrl = savedAvatar; loadAvatarImg(); showAvatar(); }
 
 // --- Activity selector ---
 function selectActivity(btn) {
+  if (btn.classList.contains('already-done')) return;
   document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active-morning','active-afternoon','active-evening'));
   selectedType = btn.dataset.type;
   btn.classList.add('active-' + selectedType);
@@ -458,8 +588,11 @@ function selectActivity(btn) {
 function completeActivity() {
   if (!selectedType) return;
   const dateVal = document.getElementById('dateInput').value;
+  if (isAlreadyStamped(dateVal, selectedType)) return;
   addStamp(dateVal, selectedType);
   renderStampCard();
+  updateAlreadyDone();
+  updateStreak();
   playSound();
   showCelebration(dateVal);
 }
@@ -485,7 +618,6 @@ function showCelebration(dateVal) {
   document.getElementById('celebActivity').textContent = `${dateStr} ${timeStr}`;
   document.getElementById('celebStamp').textContent = `\u{1F3C5} スタンプ ${total}個目!`;
 
-  // Stars burst
   const burst = document.getElementById('starsBurst');
   burst.innerHTML = '';
   const stars = ['\u{2B50}','\u{2728}','\u{1F31F}','\u{1F3C5}','\u{1F389}','\u{1FA77}'];
@@ -548,18 +680,15 @@ function renderCard() {
   const W = 1080, H = 1350;
   const cx = W / 2;
 
-  // Parse month from dateVal
   const [yr, mo] = dateVal.split('-');
   const year = parseInt(yr), month = parseInt(mo);
   const stamps = getMonthStamps(year, month);
 
-  // Background
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, W, H);
 
   const season = SEASON[month];
 
-  // Top color bar - season themed
   const topGrad = ctx.createLinearGradient(0, 0, W, 0);
   topGrad.addColorStop(0, season.color);
   topGrad.addColorStop(1, config.color1);
@@ -567,7 +696,6 @@ function renderCard() {
   roundRect(ctx, 0, 0, W, 200, 0);
   ctx.fill();
 
-  // Avatar in top bar
   if (avatarImg && avatarImg.complete && avatarImg.naturalWidth > 0) {
     const ar = 50;
     ctx.beginPath(); ctx.arc(80, 100, ar + 3, 0, Math.PI * 2);
@@ -580,7 +708,6 @@ function renderCard() {
     ctx.restore();
   }
 
-  // Title in top bar
   ctx.textAlign = 'center';
   ctx.font = '900 48px "Zen Maru Gothic","Hiragino Sans","Meiryo",sans-serif';
   ctx.fillStyle = '#fff';
@@ -593,21 +720,18 @@ function renderCard() {
   ctx.fillText(`${dateStr}  ${timeStr}`, cx + 20, 145);
   ctx.shadowBlur = 0;
 
-  // Medal + stamp count
   ctx.font = '40px "Segoe UI Emoji","Apple Color Emoji",sans-serif';
   ctx.fillText('\u{1F3C5}', cx, 260);
   ctx.font = '900 34px "Zen Maru Gothic","Hiragino Sans","Meiryo",sans-serif';
   ctx.fillStyle = '#2d2d2d';
   ctx.fillText(`${total}個目のスタンプ!`, cx, 310);
 
-  // --- Stamp card grid ---
   const gridTop = 360;
   const cellSize = 120;
   const gap = 8;
   const gridW = 7 * cellSize + 6 * gap;
   const gridLeft = (W - gridW) / 2;
 
-  // Month label with season emoji
   ctx.font = '36px "Segoe UI Emoji","Apple Color Emoji",sans-serif';
   ctx.fillText(season.emoji, cx - 160, gridTop - 5);
   ctx.fillText(season.emoji, cx + 160, gridTop - 5);
@@ -615,8 +739,7 @@ function renderCard() {
   ctx.fillStyle = season.color;
   ctx.fillText(`${year}年${month}月`, cx, gridTop - 10);
 
-  // Weekday headers
-  const weekdays = ['日','月','火','水','木','金','土'];
+  const weekdays = ['\u65E5','\u6708','\u706B','\u6C34','\u6728','\u91D1','\u571F'];
   ctx.font = 'bold 20px "Zen Maru Gothic","Hiragino Sans","Meiryo",sans-serif';
   ctx.fillStyle = '#aaa';
   for (let i = 0; i < 7; i++) {
@@ -636,7 +759,6 @@ function renderCard() {
     const dayKey = String(d).padStart(2, '0');
     const dayStamps = stamps[dayKey] || [];
 
-    // Cell background
     if (dayStamps.length > 0) {
       ctx.fillStyle = season.color + '15';
     } else {
@@ -645,13 +767,11 @@ function renderCard() {
     roundRect(ctx, x, y, cellSize, cellSize, 12);
     ctx.fill();
 
-    // Cell border
     ctx.strokeStyle = dayStamps.length > 0 ? '#ccc' : '#e0e0e0';
     ctx.lineWidth = 1.5;
     roundRect(ctx, x, y, cellSize, cellSize, 12);
     ctx.stroke();
 
-    // Today highlight
     if (dateVal === `${year}-${String(month).padStart(2,'0')}-${dayKey}`) {
       ctx.strokeStyle = season.color;
       ctx.lineWidth = 3;
@@ -659,12 +779,10 @@ function renderCard() {
       ctx.stroke();
     }
 
-    // Day number
     ctx.font = 'bold 24px "Zen Maru Gothic","Hiragino Sans","Meiryo",sans-serif';
     ctx.fillStyle = dayStamps.length > 0 ? '#222' : '#bbb';
     ctx.fillText(String(d), x + cellSize / 2, y + 35);
 
-    // Hanamaru stamps (1-3 per day)
     const n = dayStamps.length;
     if (n > 0) {
       const cx0 = x + cellSize / 2, cy0 = y + cellSize / 2 + 4;
@@ -684,7 +802,6 @@ function renderCard() {
     }
   }
 
-  // Monthly paw count
   const stampedDays = Object.keys(stamps).filter(k => stamps[k].length > 0).length;
   const totalPaws = Object.values(stamps).reduce((sum, d) => sum + d.length, 0);
   const pct = Math.round((stampedDays / daysInMonth) * 100);
@@ -697,7 +814,6 @@ function renderCard() {
   ctx.fillStyle = '#666';
   ctx.fillText(`今月の肉球: ${totalPaws}個`, cx, statY + 40);
 
-  // Footer
   const footY = H - 40;
   ctx.strokeStyle = '#eee'; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(cx - 200, footY - 25); ctx.lineTo(cx + 200, footY - 25); ctx.stroke();
@@ -780,6 +896,16 @@ document.getElementById('soundToggle').addEventListener('click', () => {
   document.getElementById('soundToggle').textContent=soundOn?'\u{1F50A}':'\u{1F507}';
 });
 
+// --- Date change handler ---
+document.getElementById('dateInput').addEventListener('change', () => {
+  updateAlreadyDone();
+  // Reset selection
+  document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active-morning','active-afternoon','active-evening'));
+  selectedType = null;
+  document.getElementById('completeBtn').disabled = true;
+  document.getElementById('completeBtn').style.opacity = '0.4';
+});
+
 // --- Init ---
 const now = new Date();
 viewYear = now.getFullYear();
@@ -787,14 +913,15 @@ viewMonth = now.getMonth() + 1;
 const todayISO = `${viewYear}-${String(viewMonth).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 document.getElementById('dateInput').value = todayISO;
 document.getElementById('dateInput').max = todayISO;
-document.getElementById('todayHint').textContent = '※ 日付を変えれば過去の記録もできます';
+document.getElementById('todayHint').textContent = '\u203B \u65E5\u4ED8\u3092\u5909\u3048\u308C\u3070\u904E\u53BB\u306E\u8A18\u9332\u3082\u3067\u304D\u307E\u3059';
 
-// Set button icons
 document.getElementById('iconMorning').innerHTML = svgIcon('morning');
 document.getElementById('iconAfternoon').innerHTML = svgIcon('afternoon');
 document.getElementById('iconEvening').innerHTML = svgIcon('evening');
 
 renderStampCard();
+updateAlreadyDone();
+updateStreak();
 </script>
 </body>
 </html>

@@ -18,9 +18,14 @@ https://oyuwarilife.github.io/katsu-celebration/
 
 - カレンダー形式のスタンプカード（月ごとの季節テーマ付き）
 - 1日最大3つのスタンプ（朝・昼・夜）
+- 同じ日・同じ時間帯の重複登録防止（登録済みは「済」バッジ表示）
+- 連続参加日数の表示（2日以上連続で表示）
 - お祝いアニメーション（紙吹雪 + 効果音）
 - Threads共有 / スタンプカード画像の保存
-- スタンプの取り消し（日付をタップ）
+- スタンプの取り消し（日付をタップ、カスタムダイアログで確認）
+- 10個ごとのマイルストーンポップアップ（Googleフォーム誘導）
+- PWA対応（ホーム画面に追加してアプリとして使用可能）
+- スマホ対応（小さい画面でもレイアウト崩れなし）
 - データはブラウザのlocalStorageに保存（アカウント登録不要）
 
 ## 技術構成
@@ -28,4 +33,5 @@ https://oyuwarilife.github.io/katsu-celebration/
 - HTML / CSS / JavaScript（単一ファイル、フレームワークなし）
 - Web Audio API（効果音）
 - Canvas API（共有用画像の生成）
+- Web App Manifest（PWA対応）
 - GitHub Pages でホスティング
