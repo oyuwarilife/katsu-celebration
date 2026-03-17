@@ -1,39 +1,41 @@
 var SHEET_ID = '1wvrhUEC33QeGrNcjly6jhtfiWgGIicYD4CiYqbik9zk';
 
-function getSheet() {
+function getSheet(name) {
   var ss = SpreadsheetApp.openById(SHEET_ID);
-  var sheet = ss.getSheetByName('ranking');
+  var sheet = ss.getSheetByName(name);
   if (!sheet) {
-    sheet = ss.insertSheet('ranking');
-    sheet.getRange(1, 1, 1, 4).setValues([['nickname', 'stampCount', 'updatedAt', 'uniqueId']]);
+    sheet = ss.insertSheet(name);
+    sheet.getRange(1, 1, 1, 5).setValues([['nickname', 'uniqueId', 'stampCount', 'monthStampCount', 'updatedAt']]);
+    sheet.getRange(1, 1, 1, 5).setFontWeight('bold');
+    sheet.setFrozenRows(1);
   }
   return sheet;
 }
 
-function setupSheet() {
-  var sheet = getSheet();
-  sheet.getRange(1, 1, 1, 4).setValues([['nickname', 'stampCount', 'updatedAt', 'uniqueId']]);
-  sheet.getRange(1, 1, 1, 4).setFontWeight('bold');
-  sheet.setColumnWidth(1, 150);
-  sheet.setColumnWidth(2, 100);
-  sheet.setColumnWidth(3, 180);
-  sheet.setColumnWidth(4, 280);
-  sheet.setFrozenRows(1);
-}
-
 function doGet(e) {
-  var sheet = getSheet();
+  var month = (e && e.parameter && e.parameter.month) || '';
+  if (!month) {
+    var now = new Date();
+    month = now.getFullYear() + '-' + ('0' + (now.getMonth()+1)).slice(-2);
+  }
+  var sheet;
+  try {
+    sheet = getSheet(month);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ ranking: [] }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   var data = sheet.getDataRange().getValues();
   var rows = [];
   for (var i = 1; i < data.length; i++) {
-    if (data[i][0] && data[i][1] > 0) {
-      rows.push({ nickname: String(data[i][0]), stampCount: Number(data[i][1]) });
+    if (data[i][0] && data[i][3] > 0) {
+      rows.push({ nickname: String(data[i][0]), monthStampCount: Number(data[i][3]) });
     }
   }
-  rows.sort(function(a, b) { return b.stampCount - a.stampCount; });
-  rows = rows.slice(0, 30);
-  var json = JSON.stringify({ ranking: rows });
-  return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
+  rows.sort(function(a, b) { return b.monthStampCount - a.monthStampCount; });
+  rows = rows.slice(0, 50);
+  return ContentService.createTextOutput(JSON.stringify({ month: month, ranking: rows }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
@@ -42,25 +44,28 @@ function doPost(e) {
   var params = JSON.parse(decoded);
   var nickname = params.nickname;
   var stampCount = params.stampCount;
+  var monthStampCount = params.monthStampCount;
+  var month = params.month;
   var uniqueId = params.uniqueId;
 
-  if (!nickname || !uniqueId || typeof stampCount !== 'number') {
+  if (!uniqueId || typeof stampCount !== 'number' || !month) {
     return ContentService.createTextOutput(JSON.stringify({ error: 'invalid params' }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 
-  var sheet = getSheet();
+  var sheet = getSheet(month);
   var data = sheet.getDataRange().getValues();
   var found = -1;
   for (var i = 1; i < data.length; i++) {
-    if (data[i][3] === uniqueId) { found = i + 1; break; }
+    if (data[i][1] === uniqueId) { found = i + 1; break; }
   }
 
   var now = new Date().toISOString();
+  var row = [nickname || uniqueId.slice(0,8), uniqueId, stampCount, monthStampCount, now];
   if (found > 0) {
-    sheet.getRange(found, 1, 1, 4).setValues([[nickname, stampCount, now, uniqueId]]);
+    sheet.getRange(found, 1, 1, 5).setValues([row]);
   } else {
-    sheet.appendRow([nickname, stampCount, now, uniqueId]);
+    sheet.appendRow(row);
   }
 
   return ContentService.createTextOutput(JSON.stringify({ ok: true }))
